@@ -39,7 +39,7 @@ Installation
 Well its not yet in that stage, but you can clone and compile. This has been written on windows and compiled using visual studio. But you could certainly compile it on linux (will try that soon)
 
 ```sh
-git clone [git-repo-url] dillinger
+git clone https://github.com/toAtulArora/qcSimulator.git
 ```
 
 License

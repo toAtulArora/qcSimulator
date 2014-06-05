@@ -4,12 +4,15 @@
 #include <complex> //For complex numbers
 #include <math.h> //For pow etc.
 #include <random> //For supporting random numbers
-using namespace std;
+#include <bitset> //For printing some binary
 
+using namespace std;
+template<class decimal=float>
 class QC
 {
 	int qBits;
-	vector <complex <float> > amplitudes;
+	decimal normalization;
+	vector <complex <decimal> > amplitudes;
 	string statusPrefix()
 	{
 		return "QC [" + to_string(msgCount++) + "]: ";
@@ -22,9 +25,19 @@ public:
 	//returned=0x1101001
 	int insertBit(int num, int tBit, int value)
 	{
-		int numLHS=num/(int)pow(2,tBit);
-		int numRHS=num%(int)pow(2,tBit);
-		return 0;
+		//int numLHS=num/(int)pow(2,tBit);
+		int numLHS=num>>tBit;
+		//numLHS=numLHS*2*pow(2,tBit);
+		numLHS=numLHS<<(tBit+1);
+		int numRHS = num &((1<<(tBit)) - 1);
+		//int numRHS=num%(int)pow(2,tBit);
+		//int numRHS=num<<
+		
+		cout<<"Num:"<<(bitset<8>) num<<endl;
+		cout<<"LHS:"<<(bitset<8>) numLHS<<endl;
+		cout<<"RHS:"<<(bitset<8>) numRHS<<endl;
+		//return numRHS+numLHS + (value==1?1:0)*pow(2,tBit);
+		return numRHS+numLHS + (value==1?1:0)*(1<<tBit);
 	}
 	int getBit(int num,int tBit)
 	{
@@ -58,9 +71,13 @@ public:
 
 void main()
 {
-	QC qc(8);
+	QC<float> qc(8);
 	cout<<qc.status<<endl;
-
+	bitset<8> n(string("00001110"));
+	//cout<<n.to_ullong()<<endl;
+	//int n=0xF;
+	int nDash=qc.insertBit(n.to_ulong(),0,1);
+	cout<<"So we had\n"<<n<<endl<<(bitset<8>) nDash<<endl<<"Did that work?";
 	//cout<<"This works";
 	_getch();
 

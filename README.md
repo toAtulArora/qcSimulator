@@ -12,15 +12,17 @@ Authors: [Kishor Bharti] and [Atul Singh Arora]
 Development Phases:
 
     A. Basic Funtionality
-        1. Implement the state initialization
+        1. Implement the state initialization   [done]
         2. Implement measurement/readout
         3. Implement gates
+            i. Single qBit [done]
+            ii. General, N qBit [in progress]
     B. Implement Usable Interface
-        1. Allow for physics like state initialization
+        1. Allow for physics like state initialization (cheating method) [done]
         2. Allow for assembly language like gates implementation (look at the codes Neilson used in his book for making those figures)
         3. Implement common things like QFT, 
         (viz. construct the gate sequence on the fly and apply it)
-        4. Apply arbitrary unitaries?
+        4. Apply arbitrary unitaries? [same as general N qBit gate]
     C. Extensions
         1. Allow for an easy way of adding algorithms/qbits dependent gate sequences
     D. Test/Write the part for Quantum Simulation

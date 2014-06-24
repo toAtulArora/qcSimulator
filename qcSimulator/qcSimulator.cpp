@@ -121,6 +121,7 @@ public:
 	string status;
 	int msgCount;
 	string log;
+	//Constructor :D
 	QC(int init_qBits)
 		:log(""),status(""),msgCount(0),normalization(1),root2(sqrt(2))
 	{
@@ -132,6 +133,7 @@ public:
 		status=statusPrefix()+"Initialized to simulate " + to_string(qBits) + " qBits. " + to_string((int)pow(2,qBits)) + " complex numbers reserved.";
 		log+=status+"\n";
 	}
+	//Initialize the given qubit to the given value
 	void init_qBit(int qBit,int value)
 	{
 		statusStream.str("");
@@ -168,15 +170,19 @@ public:
 		status=statusStream.str();
 		log+=status+"\n";
 	}
-	
+
+	//UPdates the status to read the current qubits
 	void status_qBits()
 	{
 		statusStream.str("");
-		statusStream<<statusPrefix()<<"Current state of qubits:\n";
+		statusStream<<statusPrefix()<<"Current state of qubits:\n  ";
 		for(int i=0;i<(1<<qBits)-1;i++)
 		{
 			if(nonZero(amplitudes[i]))
 				statusStream<<"("<<amplitudes[i].real()/normalization<<" + i"<<amplitudes[i].imag()/normalization<<") "<<printKet(i)<<"\n";
+			if(i+1 < (1<<qBits) -1)	//if this wasn't the last element
+				if(nonZero(amplitudes[i+1])) //and if the last element is non-zero
+					statusStream<<"+ ";
 		}
 		statusStream<<"--"<<endl;
 		status=statusStream.str();
@@ -225,6 +231,22 @@ public:
 		log+=status+"\n";
 	}
 	//QC() : QC(10) {};
+
+	//
+	void cheatInitializeState(vector<scalar>& newAmplitudes)
+	{
+		statusStream.str("");
+		statusStream<<statusPrefix()<<"Initializing the state (cheating)"<<endl;
+		amplitudes.swap(newAmplitudes);
+		normalization=0;
+		for(int i=0;i<amplitudes.size();i++)
+		{
+			normalization+=norm(amplitudes[i]);
+		}
+		statusStream<<"Done";
+		status=statusStream.str();
+		log+=status+"\n";
+	}
 };
 
 
@@ -233,7 +255,15 @@ void main()
 	typedef QC<float> QCf;
 	QCf qc(8);
 	cout<<qc.status<<endl;
-	qc.init_qBit(2,1);
+
+	vector<QCf::scalar> newAmplitudes;
+	newAmplitudes.assign(1<<8,0);
+	newAmplitudes[0]=0.5;
+	newAmplitudes[1]=0.5;
+	qc.cheatInitializeState(newAmplitudes);
+
+
+	//qc.init_qBit(2,1);
 	cout<<qc.status<<endl;	
 	qc.status_qBits();
 	cout<<qc.status<<endl;
@@ -241,6 +271,7 @@ void main()
 	cout<<qc.status<<endl;
 	qc.status_qBits();
 	cout<<qc.status<<endl;
+
 	//Matrix<double,2,2> mat1,mat2;
 	//mat2<<1,1,2,2;
 	//mat1=mat2;

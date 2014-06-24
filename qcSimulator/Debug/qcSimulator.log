@@ -1,23 +1,36 @@
-﻿Build started 24/06/2014 04:15:03 PM.
+﻿Build started 24/06/2014 04:42:25 PM.
      1>Project "C:\Users\Atul\Documents\gitHub\qcSimulator\qcSimulator\qcSimulator.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt qcSimulator.cpp
          qcSimulator.cpp
-     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(126): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(124) : while compiling class template member function 'QC<decimal>::QC(int)'
+     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(127): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(125) : while compiling class template member function 'QC<decimal>::QC(int)'
                  with
                  [
                      decimal=float
                  ]
-                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(234) : see reference to function template instantiation 'QC<decimal>::QC(int)' being compiled
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(256) : see reference to function template instantiation 'QC<decimal>::QC(int)' being compiled
                  with
                  [
                      decimal=float
                  ]
-                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(234) : see reference to class template instantiation 'QC<decimal>' being compiled
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(256) : see reference to class template instantiation 'QC<decimal>' being compiled
                  with
                  [
                      decimal=float
+                 ]
+     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(242): warning C4018: '<' : signed/unsigned mismatch
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(237) : while compiling class template member function 'void QC<decimal>::cheatInitializeState(std::vector<_Ty> &)'
+                 with
+                 [
+                     decimal=float,
+                     _Ty=std::complex<float>
+                 ]
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(263) : see reference to function template instantiation 'void QC<decimal>::cheatInitializeState(std::vector<_Ty> &)' being compiled
+                 with
+                 [
+                     decimal=float,
+                     _Ty=std::complex<float>
                  ]
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Atul\Documents\gitHub\qcSimulator\Debug\qcSimulator.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Atul\Documents\gitHub\qcSimulator\Debug\qcSimulator.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Atul\Documents\gitHub\qcSimulator\Debug\qcSimulator.lib" /MACHINE:X86 Debug\qcSimulator.obj
@@ -26,4 +39,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.91
+Time Elapsed 00:00:03.09

@@ -5,19 +5,28 @@
 #include <math.h> //For pow etc.
 #include <random> //For supporting random numbers
 #include <bitset> //For printing some binary
+#include <Eigen/Dense>	//For matrix multiplication an all
+using namespace Eigen;
 
 using namespace std;
 template<class decimal=float>
 class QC
 {
-	int qBits;
-	decimal normalization;
-	vector <complex <decimal> > amplitudes;
+public:
+	typedef complex<decimal> scalar;
+private: 
+	int qBits; //Number of qubits
+	decimal normalization; //Normalization constant
+	vector <scalar > amplitudes; //stores the complex amplitudes
+	decimal root2; //just for saving root2 as its used often
+	//The following simply returns a nicely formatted message prefix to the messages
+	//QC [0]: Here's the first message
+	//like that
 	string statusPrefix()
 	{
 		return "QC [" + to_string(msgCount++) + "]: ";
 	}
-public:
+//public:
 	//Does something like this
 	//num=0x110100
 	//tBit=0
@@ -28,6 +37,10 @@ public:
 		//return to_string((bitset<8>) n) + " [" + to_string(n) + "]";
 	//}
 
+	//This is for ease of viewing a number
+	//it prints the number 2 as
+	//2 [00000010]
+	//Both decimal and binary
 	string printNumFancy(int n)
 	{
 		stringstream temp;
@@ -35,6 +48,13 @@ public:
 		return temp.str();
 	}
 
+	//This is used in some subroutine
+	//This does something like this
+	//For num=3, tBit=1, value=1, we have
+	// num (in binary) = 0 0 0 0 0 0 1 1
+	// target bit                     ^
+	// result (binary) = 0 0 0 0 0 0 1 1 1
+	// the first (leftmost) zero is truncated
 	int insertBit(int num, int tBit, int value)
 	{
 		//USEFUL TEST CODE (USE IT OUTSIDE AND MAKE THIS PUBLIC FIRST)
@@ -62,22 +82,50 @@ public:
 		//return numRHS+numLHS + (value==1?1:0)*pow(2,tBit);
 		return numRHS+numLHS + (value==1?1:0)*(1<<tBit);
 	}
+	//Not used, but it basically gives the value of the said bit in a number in base 2
 	int getBit(int num,int tBit)
 	{
 		return num/(int)pow(2,tBit) - 2*(num/(int)pow(2,tBit+1));
 	}
+	//not used, not implemented
 	int setBit(int num, int tBit, int value)
 	{
 		return 0;
 	}
-public:
+	//For a complex number, returns true if its non-zero
+	bool nonZero(complex <decimal> num)
+	{
+		if(num.real()!=0 || num.imag()!=0)
+			return true;
+		else
+			return false;
+	}
+	
+	//Prints the number as a ket
+	string printKet(int n)
+	{
+		stringstream temp;
+		temp<<"|"<<(bitset<8>) n << " (" <<n<<") >";
+		return temp.str();
+	}
+public:	
+	typedef Matrix< scalar, 2, 2> mat2x2;
+	typedef Matrix< scalar, 2, 1> mat2x1;
+	
+	//typedef Matrix< complex<decimal>, 2, 2> tMat2x2;
+
+	mat2x2 hadamard;	
+	//tMat2x2 hadamard2;
+
 	stringstream statusStream;
 	string status;
 	int msgCount;
 	string log;
 	QC(int init_qBits)
-		:log(""),status(""),msgCount(0),normalization(1)
+		:log(""),status(""),msgCount(0),normalization(1),root2(sqrt(2))
 	{
+		hadamard << 1/root2 , 1/root2,
+			1/root2, -1/root2;
 		qBits=init_qBits;
 		amplitudes.resize((int)pow(2,qBits));
 		amplitudes[0]=complex<decimal>(1,0); //Set all qbits to zero
@@ -92,15 +140,16 @@ public:
 		{
 			int survivorBasis=insertBit(i,qBit,value);
 			int killBasis=insertBit(i,qBit,!value);
-			complex<decimal> amplitude=amplitudes[survivorBasis];
-			complex<decimal> modifyAmplitude=amplitudes[killBasis];
+			//assigned by reference
+			complex<decimal>& amplitude=amplitudes[survivorBasis];
+			complex<decimal>& modifyAmplitude=amplitudes[killBasis];
 			if(!(amplitude.real()==0 && amplitude.imag()==0))
 			{
 				normalization -= norm(modifyAmplitude);
 				modifyAmplitude=0;
 				statusStream<< "Normalization: "<<normalization<<endl
-						<<	"Modified qBit: "<< printNumFancy(killBasis)<<endl
-						<<	"Survivor qBit: "<< printNumFancy(survivorBasis)<<endl<<"--"<<endl;
+						<<	"Modified basis: "<< printNumFancy(killBasis)<<endl
+						<<	"Survivor basis: "<< printNumFancy(survivorBasis)<<endl<<"--"<<endl;
 			}
 			else
 			{
@@ -120,16 +169,83 @@ public:
 		log+=status+"\n";
 	}
 	
+	void status_qBits()
+	{
+		statusStream.str("");
+		statusStream<<statusPrefix()<<"Current state of qubits:\n";
+		for(int i=0;i<(1<<qBits)-1;i++)
+		{
+			if(nonZero(amplitudes[i]))
+				statusStream<<"("<<amplitudes[i].real()/normalization<<" + i"<<amplitudes[i].imag()/normalization<<") "<<printKet(i)<<"\n";
+		}
+		statusStream<<"--"<<endl;
+		status=statusStream.str();
+		log+=status+"\n";
+	}
+	//Make sure the gate matrix is normalized!
+	void gate1_qBit(const mat2x2& gate, int qBit1)
+	{
+		//mat2x2 gate;
+		//gate<< 1/root2, 1/root2, 1/root2, -1/root2;
+		//gate+=gate2;
+		statusStream.str("");
+		statusStream<<statusPrefix()<<"Applying the following Gate on a single qBit \n"<<gate<<endl;
+		statusStream<<"Allocating memory for evaluation"<<endl;
+		vector <scalar> evaluatedAmplitudes;
+		evaluatedAmplitudes.assign((1<<qBits),0);	//Intialize to 0
+
+		mat2x1 basis0(1,0);
+		mat2x1 transformedBasis0=gate*basis0;
+		statusStream<<"Transformed Basis 0:\n"<<transformedBasis0<<endl;
+		mat2x1 basis1(0,1);
+		mat2x1 transformedBasis1=gate*basis1;
+		statusStream<<"Transformed Basis 1:\n"<<transformedBasis1<<endl;
+		for(int i=0; i<(1<<(qBits-1)) - 1; i++)
+		{
+			int j=insertBit(i,qBit1,0);
+			int k=insertBit(i,qBit1,1);
+			//This is essentially (for hadamard), applying
+			// |0> ----> (|0> + |1>)/sqrt(2)
+			// ^amplitudes[j]
+			//			   ^ evaluatedAmplitudes[j]
+			//					 ^ evaluatedAmplitudes[k]
+			evaluatedAmplitudes[j]+=amplitudes[j] * transformedBasis0(0);
+			evaluatedAmplitudes[k]+=amplitudes[j] * transformedBasis0(1);
+			//Note += is used since its a linear transformation that's being applied (just give it a thought and it should be clear)
+
+			//And now the same thing for
+			// |1> ----> (|0> - |1>)/sqrt(2)
+			evaluatedAmplitudes[j]+=amplitudes[k] * transformedBasis1(0);
+			evaluatedAmplitudes[k]+=amplitudes[k] * transformedBasis1(1);
+		}
+		//Now that we're done, we simply swap the vectors
+		amplitudes.swap(evaluatedAmplitudes);
+		//and upon destruction, evaluatedAmplitudes will be freed from the memory :D
+		status=statusStream.str();
+		log+=status+"\n";
+	}
 	//QC() : QC(10) {};
 };
 
 
 void main()
 {
-	QC<float> qc(8);
+	typedef QC<float> QCf;
+	QCf qc(8);
 	cout<<qc.status<<endl;
 	qc.init_qBit(2,1);
+	cout<<qc.status<<endl;	
+	qc.status_qBits();
 	cout<<qc.status<<endl;
+	qc.gate1_qBit(qc.hadamard,2);
+	cout<<qc.status<<endl;
+	qc.status_qBits();
+	cout<<qc.status<<endl;
+	//Matrix<double,2,2> mat1,mat2;
+	//mat2<<1,1,2,2;
+	//mat1=mat2;
+	//cout<<mat1<<endl<<mat2;
 	_getch();
+	//QCf::mat2x2 m;
 
 }

@@ -6,6 +6,7 @@
 #include <random> //For supporting random numbers
 #include <bitset> //For printing some binary
 #include <Eigen/Dense>	//For matrix multiplication an all
+#include <algorithm> //For sort
 using namespace Eigen;
 
 using namespace std;
@@ -81,6 +82,26 @@ private:
 		
 		//return numRHS+numLHS + (value==1?1:0)*pow(2,tBit);
 		return numRHS+numLHS + (value==1?1:0)*(1<<tBit);
+	}
+
+	int insertBits(int num, vector < vector <int> > data)
+	{
+		bool insertBitsSort(vector<int> a, vector<int> b)
+		{
+			//return a[0]<b[0]; //for ascending |
+			return a[0]>b[0]; //for descending
+		}
+		//So data is expected to be something like this
+		// tBit, value
+		// data={ {2,1} , {1,0}, {3,1} }
+		// So this whole thing is to sort the whole thing (sounds silly now..) so that insertion can be done to the left (bigger tBit) first
+		sort(data.begin(),data.end(),insertBitsSort);
+		int resultantNum=num;
+		for(vector<int> &a : data)
+		{
+			resultantNum=insertBit(resultantNum,a[0],a[1]);
+		}
+		return resultantNum;
 	}
 	//Not used, but it basically gives the value of the said bit in a number in base 2
 	int getBit(int num,int tBit)
@@ -229,6 +250,16 @@ public:
 		//and upon destruction, evaluatedAmplitudes will be freed from the memory :D
 		status=statusStream.str();
 		log+=status+"\n";
+	}
+	template <typename Derived>
+	void gateN_qBit(int num_qBits,const EigenBase<Derived>& gate, vector <int> qBitX)
+	{
+
+		vector <vector <int> > insertBitsData;
+		vector<int> a;
+		for(int &x : qBitX)
+			inserBitsData.push_back(vector <int> {x,1});
+		insertBits(num,insertBitsData);
 	}
 	//QC() : QC(10) {};
 

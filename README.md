@@ -65,7 +65,7 @@ Setting up cloud 9
 0. Login using your github account and allow the SSH key sharing.
 1. Use a new project workspace with c++. (because directly cloning a github repo doesn't result in availability of the latest c compiler.)
 2. Then use git clone for getting the repository cloned.
-3. Now, ```sh git remote set-url origin git@github.com:toAtulArora/qcSimulator.git ```
+3. Now, ``` git remote set-url origin git@github.com:toAtulArora/qcSimulator.git ```
 
 License
 ----

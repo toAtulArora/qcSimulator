@@ -84,8 +84,8 @@ public:
 		//return numRHS+numLHS + (value==1?1:0)*pow(2,tBit);
 		return numRHS+numLHS + (value==1?1:0)*(1<<tBit);
 	}
-
-	bool insertBitsSort(vector<int> a, vector<int> b)
+    //Not used! I am using inline now
+	bool insertBitsSort(const vector<int>& a, const vector<int>& b)
 	{
 		return a[0]<b[0]; //for ascending |
 		//return a[0]>b[0]; //for descending
@@ -97,7 +97,12 @@ public:
 		// tBit, value
 		// data={ {2,1} , {1,0}, {3,1} }
 		// So this whole thing is to sort the whole thing (sounds silly now..) so that insertion can be done to the right (smallest tBit) first
-		sort(data.begin(),data.end(),insertBitsSort);
+		//sort(data.begin(),data.end(),insertBitsSort);
+		//TODO: Understand the lambda symbol
+		sort(data.begin(),data.end(),[](const vector<int>& a, const vector<int>& b)
+		{
+		    return a[0]<b[0];
+		});
 		int resultantNum=num;
 		for(vector<int> &a : data)
 		{
@@ -253,21 +258,22 @@ public:
 		status=statusStream.str();
 		log+=status+"\n";
 	}
+	//TODO: Understand how derived is working
 	template <typename Derived>
 	void gateN_qBit(const EigenBase<Derived>& gate, vector <int> qBitX)
 	{
 		int num_qBits=qBitX.size();
 
 		statusStream.str("");
-		statusStream<<statusPrefix()<<"Testing now";
-		int num=1;
+		statusStream<<statusPrefix()<<"Testing now\n";
+		int num=0;
 		vector <vector <int> > insertBitsData;
 		vector<int> a;
 
 		for(int &x : qBitX)
 			insertBitsData.push_back(vector <int> {x,1});
 		
-		statusStream<<printNumFancy(num)<<"\n"<<printNumFancy( insertBits(num,insertBitsData));
+		statusStream<<printNumFancy(num)<<"\n"<<printNumFancy( insertBits(num,insertBitsData))<<endl;
 		status=statusStream.str();
 		log+=status;
 	}
@@ -299,8 +305,8 @@ int main()
 
 	vector<QCf::scalar> newAmplitudes;
 	newAmplitudes.assign(1<<8,0);
-	newAmplitudes[0]=0.5;
-	newAmplitudes[1]=0.5;
+	newAmplitudes[0]=qc.root2;
+	newAmplitudes[1]=qc.root2;
 	qc.cheatInitializeState(newAmplitudes);
 
 
@@ -312,10 +318,11 @@ int main()
 	cout<<qc.status<<endl;
 	qc.status_qBits();
 	cout<<qc.status<<endl;
-	//vector <int> a;
+	vector <int> a;
 	//a={0,2,3,4};
 
-	//qc.gateN_qBit(qc.hadamard, {0,2,3,4} );
+	qc.gateN_qBit(qc.hadamard, {0,2,4,6} );
+	cout<<qc.status<<endl;
 	//Matrix<double,2,2> mat1,mat2;
 	//mat2<<1,1,2,2;
 	//mat1=mat2;

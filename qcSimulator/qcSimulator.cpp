@@ -10,6 +10,40 @@
 using namespace Eigen;
 
 using namespace std;
+//////A useful function
+template <class Collection>
+string to_string(Collection const & collection,char const * delimiter)
+{
+    typedef typename Collection::const_iterator Iter;
+    
+    Iter beg = collection.begin();
+    Iter const end = collection.end();
+    
+    if (beg == end)
+    {
+        return string();
+    }
+    
+    std::ostringstream os;
+    
+    os << *beg;
+    ++beg;
+    
+    for ( ; beg != end; ++beg)
+    {
+        os << delimiter << *beg;
+    }
+    
+    return os.str();
+}
+
+template<class Collection>
+string to_string(Collection const & collection, string const & delimiter)
+{
+    return to_string(collection, delimiter.c_str());
+}
+////////////
+
 template<class decimal=float>
 class QC
 {
@@ -114,7 +148,7 @@ public:
 	int getBit(int num,int tBit)
 	{
 		//return num/(int)pow(2,tBit) - 2*(num/(int)pow(2,tBit+1));
-		return (num & (1<<tBit) == 0 ? 0 : 1);
+		return (((num & (1<<tBit)) == 0) ? 0 : 1);
 	}
 	//not used, not implemented
 	int setBit(int num, int tBit, int value)
@@ -129,6 +163,8 @@ public:
 		else
 			return false;
 	}
+
+    
 	
 	//Prints the number as a ket
 	string printKet(int n)
@@ -263,6 +299,8 @@ public:
 	template <typename Derived>
 	void gateN_qBit(const MatrixBase<Derived>& gate, vector <int> qBitX)
 	{
+	    statusStream.str("");
+	    statusStream<<statusPrefix()<<"Applying the following on {"<<to_string(qBitX,",")<<"} qubits\n"<<gate<<endl;
 		//int num_qBits=qBitX.size();             //Number of qbits involved in the operation of the gate, eg 2
         vector<scalar> evaluatedAmplitudes;
         evaluatedAmplitudes.assign((1<<qBits), 0);
@@ -270,22 +308,30 @@ public:
         Matrix< scalar, Dynamic, Dynamic> transformedBasis (1<<qBitX.size(),1); //Same thing for the transformed basis
         #define remaining_qBits qBits-qBitX.size()
         //TODO: assert that the matrix's dimensiona nd size(qBitX) are equal
+        statusStream<<"Entering the loop\n";
         for(int j=0;j<(1<<remaining_qBits);j++)
         {
+            statusStream<<"j="<<printNumFancy(j)<<endl;
             //Find out why the following isn't working (although it isn't even needed)
             //basis()=Matrix< scalar, Dynamic, Dynamic>::Zero(1<<qBitX.size(), 1);
             for(int i=0;i<(1<<qBitX.size());i++)
             {
+                statusStream<<"i="<<i<<endl;
                 vector< vector <int> > insertBitsData;
                 int k=0;
                 for(int &x: qBitX)
+                {
                     insertBitsData.push_back(vector <int> {x,getBit(i,k++)});
-                int ii=insertBits(i,insertBitsData);
-                
+                    statusStream<<"x="<<x<<" val="<<getBit(i,k-1)<<endl;
+                }
+                    
+                int ii=insertBits(j,insertBitsData);
+                statusStream<<"ii="<<printNumFancy(ii)<<endl;
                 basis(i)=amplitudes[ii];
             }
+            statusStream<<"The basis for the given j is \n"<<basis<<endl;
             transformedBasis=gate*basis;
-            
+            statusStream<<"The transformed basis is \n"<<transformedBasis<<endl;
             //The following seems duplicated, but there is little point in converting this to a function
             //The last assignment is different, that's all.
             for(int i=0;i<(1<<qBitX.size());i++)
@@ -294,12 +340,13 @@ public:
                 int k=0;
                 for(int &x: qBitX)
                     insertBitsData.push_back(vector <int> {x,getBit(i,k++)});
-                int ii=insertBits(i,insertBitsData);
+                int ii=insertBits(j,insertBitsData);
                 evaluatedAmplitudes[ii]+=transformedBasis(i);
             }
         }
         amplitudes.swap(evaluatedAmplitudes);
-        
+        status=statusStream.str();
+        log+=status;
         // This was for Testing
 // 		statusStream.str("");
 // 		statusStream<<statusPrefix()<<"Testing now\n";
@@ -351,15 +398,15 @@ int main()
 	cout<<qc.status<<endl;	
 	qc.status_qBits();
 	cout<<qc.status<<endl;
-	qc.gate1_qBit(qc.hadamard,2);
-	cout<<qc.status<<endl;
+// 	qc.gate1_qBit(qc.hadamard,2);
+// 	cout<<qc.status<<endl;
 
-// 	qc.gateN_qBit(qc.hadamard, {2} );
+	qc.gateN_qBit(qc.hadamard, {2} );
 // 	cout<<qc.status<<endl;
 
 	qc.status_qBits();
 	cout<<qc.status<<endl;
-	vector <int> a;
+// 	vector <int> a;
 	//a={0,2,3,4};
 
 	//Matrix<double,2,2> mat1,mat2;

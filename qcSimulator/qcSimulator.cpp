@@ -15,10 +15,11 @@ class QC
 {
 public:
 	typedef complex<decimal> scalar;
-private: 
+//TODO: make it private
+public: 
 	int qBits; //Number of qubits
 	decimal normalization; //Normalization constant
-	vector <scalar > amplitudes; //stores the complex amplitudes
+	vector <scalar> amplitudes; //stores the complex amplitudes
 	decimal root2; //just for saving root2 as its used often
 	//The following simply returns a nicely formatted message prefix to the messages
 	//QC [0]: Here's the first message
@@ -88,13 +89,13 @@ private:
 	{
 		bool insertBitsSort(vector<int> a, vector<int> b)
 		{
-			//return a[0]<b[0]; //for ascending |
-			return a[0]>b[0]; //for descending
+			return a[0]<b[0]; //for ascending |
+			//return a[0]>b[0]; //for descending
 		}
 		//So data is expected to be something like this
 		// tBit, value
 		// data={ {2,1} , {1,0}, {3,1} }
-		// So this whole thing is to sort the whole thing (sounds silly now..) so that insertion can be done to the left (bigger tBit) first
+		// So this whole thing is to sort the whole thing (sounds silly now..) so that insertion can be done to the right (smallest tBit) first
 		sort(data.begin(),data.end(),insertBitsSort);
 		int resultantNum=num;
 		for(vector<int> &a : data)
@@ -252,14 +253,22 @@ public:
 		log+=status+"\n";
 	}
 	template <typename Derived>
-	void gateN_qBit(int num_qBits,const EigenBase<Derived>& gate, vector <int> qBitX)
+	void gateN_qBit(const EigenBase<Derived>& gate, vector <int> qBitX)
 	{
+		int num_qBits=qBitX.size();
 
+		statusStream.str("");
+		statusStream<<statusPrefix()<<"Testing now";
+		int num=1;
 		vector <vector <int> > insertBitsData;
 		vector<int> a;
+
 		for(int &x : qBitX)
 			inserBitsData.push_back(vector <int> {x,1});
-		insertBits(num,insertBitsData);
+		
+		statusStream<<printNumFancy(num)<<"\n"<<printNumFancy( insertBits(num,insertBitsData));
+		status=statusStream.str();
+		log+=status;
 	}
 	//QC() : QC(10) {};
 
@@ -302,7 +311,10 @@ void main()
 	cout<<qc.status<<endl;
 	qc.status_qBits();
 	cout<<qc.status<<endl;
+	vector <int> a;
+	a={0,2,3,4};
 
+	qc.gateN_qBit(qc.hadamard, {0,2,3,4} );
 	//Matrix<double,2,2> mat1,mat2;
 	//mat2<<1,1,2,2;
 	//mat1=mat2;

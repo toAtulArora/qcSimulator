@@ -311,10 +311,10 @@ void main()
 	cout<<qc.status<<endl;
 	qc.status_qBits();
 	cout<<qc.status<<endl;
-	vector <int> a;
-	a={0,2,3,4};
+	//vector <int> a;
+	//a={0,2,3,4};
 
-	qc.gateN_qBit(qc.hadamard, {0,2,3,4} );
+	//qc.gateN_qBit(qc.hadamard, {0,2,3,4} );
 	//Matrix<double,2,2> mat1,mat2;
 	//mat2<<1,1,2,2;
 	//mat1=mat2;

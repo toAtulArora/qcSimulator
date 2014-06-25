@@ -1,39 +1,30 @@
-﻿Build started 25/06/2014 11:15:08 AM.
+﻿Build started 25/06/2014 11:26:04 AM.
      1>Project "C:\Users\Atul\Documents\gitHub\qcSimulator\qcSimulator\qcSimulator.vcxproj" on node 2 (Build target(s)).
      1>CTP_Warning:
          'Microsoft Visual C++ Compiler Nov 2012 CTP' is for testing purposes only.
        ClCompile:
          C:\Program Files (x86)\Microsoft Visual C++ Compiler Nov 2012 CTP\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt qcSimulator.cpp
          qcSimulator.cpp
-     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(315): error C2679: binary '=' : no operator found which takes a right-hand operand of type 'initializer-list' (or there is no acceptable conversion)
-                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\vector(903): could be 'std::vector<int,std::allocator<_Ty>> &std::vector<_Ty,std::allocator<_Ty>>::operator =(const std::vector<_Ty,std::allocator<_Ty>> &)'
+     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(149): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(147) : while compiling class template member function 'QC<float>::QC(int)'
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(296) : see reference to function template instantiation 'QC<float>::QC(int)' being compiled
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(296) : see reference to class template instantiation 'QC<float>' being compiled
+     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(282): warning C4018: '<' : signed/unsigned mismatch
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(277) : while compiling class template member function 'void QC<float>::cheatInitializeState(std::vector<std::complex<float>,std::allocator<_Ty>> &)'
                  with
                  [
-                     _Ty=int
+                     _Ty=std::complex<float>
                  ]
-                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\vector(802): or       'std::vector<int,std::allocator<_Ty>> &std::vector<_Ty,std::allocator<_Ty>>::operator =(std::vector<_Ty,std::allocator<_Ty>> &&)'
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(303) : see reference to function template instantiation 'void QC<float>::cheatInitializeState(std::vector<std::complex<float>,std::allocator<_Ty>> &)' being compiled
                  with
                  [
-                     _Ty=int
+                     _Ty=std::complex<float>
                  ]
-                 while trying to match the argument list '(std::vector<int,std::allocator<_Ty>>, initializer-list)'
-                 with
-                 [
-                     _Ty=int
-                 ]
-     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(317): error C2664: 'void QC<float>::gateN_qBit<Derived>(const Eigen::EigenBase<Derived> &,std::vector<int,std::allocator<_Ty>>)' : cannot convert parameter 3 from 'initializer-list' to 'std::vector<int,std::allocator<_Ty>>'
-                 with
-                 [
-                     Derived=Eigen::Matrix<std::complex<float>,2,2,0,2,2>
-         ,            _Ty=int
-                 ]
-                 and
-                 [
-                     _Ty=int
-                 ]
-                 No constructor could take the source type, or constructor overload resolution was ambiguous
-     1>Done Building Project "C:\Users\Atul\Documents\gitHub\qcSimulator\qcSimulator\qcSimulator.vcxproj" (Build target(s)) -- FAILED.
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Atul\Documents\gitHub\qcSimulator\Debug\qcSimulator.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Atul\Documents\gitHub\qcSimulator\Debug\qcSimulator.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Atul\Documents\gitHub\qcSimulator\Debug\qcSimulator.lib" /MACHINE:X86 "/fe:C:\Program Files (x86)\Microsoft Visual C++ Compiler Nov 2012 CTP\\bin\c1xx.dll"  Debug\qcSimulator.obj
+         qcSimulator.vcxproj -> C:\Users\Atul\Documents\gitHub\qcSimulator\Debug\qcSimulator.exe
+     1>Done Building Project "C:\Users\Atul\Documents\gitHub\qcSimulator\qcSimulator\qcSimulator.vcxproj" (Build target(s)).
 
-Build FAILED.
+Build succeeded.
 
-Time Elapsed 00:00:02.05
+Time Elapsed 00:00:05.79

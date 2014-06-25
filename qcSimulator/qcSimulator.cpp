@@ -308,42 +308,49 @@ public:
         Matrix< scalar, Dynamic, Dynamic> transformedBasis (1<<qBitX.size(),1); //Same thing for the transformed basis
         #define remaining_qBits qBits-qBitX.size()
         //TODO: assert that the matrix's dimensiona nd size(qBitX) are equal
-        statusStream<<"Entering the loop\n";
+        statusStream<<"Entering the loop\n Note: The results aren't normalized (normalization constant="<<normalization<<")\n";
         for(int j=0;j<(1<<remaining_qBits);j++)
         {
-            statusStream<<"j="<<printNumFancy(j)<<endl;
+            // statusStream<<"j="<<printNumFancy(j)<<endl;
             //Find out why the following isn't working (although it isn't even needed)
             //basis()=Matrix< scalar, Dynamic, Dynamic>::Zero(1<<qBitX.size(), 1);
+            bool notBlank=false;
             for(int i=0;i<(1<<qBitX.size());i++)
             {
-                statusStream<<"i="<<i<<endl;
+                // statusStream<<"i="<<i<<endl;
                 vector< vector <int> > insertBitsData;
                 int k=0;
                 for(int &x: qBitX)
                 {
                     insertBitsData.push_back(vector <int> {x,getBit(i,k++)});
-                    statusStream<<"x="<<x<<" val="<<getBit(i,k-1)<<endl;
+                    // statusStream<<"x="<<x<<" val="<<getBit(i,k-1)<<endl;
                 }
                     
                 int ii=insertBits(j,insertBitsData);
-                statusStream<<"ii="<<printNumFancy(ii)<<endl;
+                // statusStream<<"ii="<<printNumFancy(ii)<<endl;
                 basis(i)=amplitudes[ii];
+                if(nonZero(basis(i)))
+                    notBlank=true;
             }
-            statusStream<<"The basis for the given j is \n"<<basis<<endl;
-            transformedBasis=gate*basis;
-            statusStream<<"The transformed basis is \n"<<transformedBasis<<endl;
-            //The following seems duplicated, but there is little point in converting this to a function
-            //The last assignment is different, that's all.
-            for(int i=0;i<(1<<qBitX.size());i++)
+            if(notBlank)
             {
-                vector< vector <int> > insertBitsData;
-                int k=0;
-                for(int &x: qBitX)
-                    insertBitsData.push_back(vector <int> {x,getBit(i,k++)});
-                int ii=insertBits(j,insertBitsData);
-                evaluatedAmplitudes[ii]+=transformedBasis(i);
+                statusStream<<"The basis for the given j (= "<<printNumFancy(j)<<") is \n"<<basis<<endl;
+                transformedBasis=gate*basis;
+                statusStream<<"The transformed basis is \n"<<transformedBasis<<endl;
+                //The following seems duplicated, but there is little point in converting this to a function
+                //The last assignment is different, that's all.
+                for(int i=0;i<(1<<qBitX.size());i++)
+                {
+                    vector< vector <int> > insertBitsData;
+                    int k=0;
+                    for(int &x: qBitX)
+                        insertBitsData.push_back(vector <int> {x,getBit(i,k++)});
+                    int ii=insertBits(j,insertBitsData);
+                    evaluatedAmplitudes[ii]+=transformedBasis(i);
+                }
             }
         }
+        statusStream<<"Evaluation completed"<<endl<<"----"<<endl;
         amplitudes.swap(evaluatedAmplitudes);
         status=statusStream.str();
         log+=status;
@@ -402,7 +409,7 @@ int main()
 // 	cout<<qc.status<<endl;
 
 	qc.gateN_qBit(qc.hadamard, {2} );
-// 	cout<<qc.status<<endl;
+	cout<<qc.status<<endl;
 
 	qc.status_qBits();
 	cout<<qc.status<<endl;

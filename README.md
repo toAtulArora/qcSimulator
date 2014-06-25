@@ -49,7 +49,24 @@ For compiling, use
 cd qcSimulator
 g++ -std=c++11 -I ../eigen qcSimulator.cpp -o Debug/qcSimulator
 ```
+OR simply
+```sh
+g++ -std=c++11 -I eigen qcSimulator/qcSimulator.cpp -o qcSimulator/Debug/qcSimulator
+```
+
+and run using
+```sh
+./qcSimulator/Debug/qcSimulator
+```
 TODO: Add a makefile to do this.
+
+Setting up cloud 9
+-----
+0. Login using your github account and allow the SSH key sharing.
+1. Use a new project workspace with c++. (because directly cloning a github repo doesn't result in availability of the latest c compiler.)
+2. Then use git clone for getting the repository cloned.
+3. Now, ```sh git remote set-url origin git@github.com:toAtulArora/qcSimulator.git ```
+
 License
 ----
 There's nothing really there to talk about licensing, but its very likely going to be free for academic use.

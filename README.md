@@ -44,6 +44,12 @@ Well its not yet in that stage, but you can clone and compile. This has been wri
 git clone https://github.com/toAtulArora/qcSimulator.git
 ```
 
+For compiling, use
+```sh
+cd qcSimulator
+g++ -std=c++11 -I ../eigen qcSimulator.cpp -o Debug/qcSimulator
+```
+TODO: Add a makefile to do this.
 License
 ----
 There's nothing really there to talk about licensing, but its very likely going to be free for academic use.

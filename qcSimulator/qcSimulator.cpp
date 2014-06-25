@@ -1,5 +1,5 @@
 #include <iostream> //Well..
-#include <conio.h> //For getch()
+//#include <conio.h> //For getch()
 #include <vector> //For arrays
 #include <complex> //For complex numbers
 #include <math.h> //For pow etc.
@@ -85,13 +85,14 @@ public:
 		return numRHS+numLHS + (value==1?1:0)*(1<<tBit);
 	}
 
+	bool insertBitsSort(vector<int> a, vector<int> b)
+	{
+		return a[0]<b[0]; //for ascending |
+		//return a[0]>b[0]; //for descending
+	}
+
 	int insertBits(int num, vector < vector <int> > data)
 	{
-		bool insertBitsSort(vector<int> a, vector<int> b)
-		{
-			return a[0]<b[0]; //for ascending |
-			//return a[0]>b[0]; //for descending
-		}
 		//So data is expected to be something like this
 		// tBit, value
 		// data={ {2,1} , {1,0}, {3,1} }
@@ -264,7 +265,7 @@ public:
 		vector<int> a;
 
 		for(int &x : qBitX)
-			inserBitsData.push_back(vector <int> {x,1});
+			insertBitsData.push_back(vector <int> {x,1});
 		
 		statusStream<<printNumFancy(num)<<"\n"<<printNumFancy( insertBits(num,insertBitsData));
 		status=statusStream.str();
@@ -290,7 +291,7 @@ public:
 };
 
 
-void main()
+int main()
 {
 	typedef QC<float> QCf;
 	QCf qc(8);
@@ -319,7 +320,8 @@ void main()
 	//mat2<<1,1,2,2;
 	//mat1=mat2;
 	//cout<<mat1<<endl<<mat2;
-	_getch();
+	//_getch();
+	cin.get();
 	//QCf::mat2x2 m;
-
+    return 0;
 }

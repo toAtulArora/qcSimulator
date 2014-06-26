@@ -10,7 +10,7 @@
 using namespace Eigen;
 
 using namespace std;
-//////A useful function
+//////A useful function for printing arrays
 template <class Collection>
 string to_string(Collection const & collection,char const * delimiter)
 {
@@ -175,13 +175,15 @@ public:
 	}
 public:	
 	typedef Matrix< scalar, 2, 2> mat2x2;
+	typedef Matrix< scalar, 4, 4> mat4x4;
 	typedef Matrix< scalar, 2, 1> mat2x1;
 	
 	//typedef Matrix< complex<decimal>, 2, 2> tMat2x2;
 
 	mat2x2 hadamard;	
+	mat4x4 cNot;
 	//tMat2x2 hadamard2;
-
+    
 	stringstream statusStream;
 	string status;
 	int msgCount;
@@ -192,6 +194,10 @@ public:
 	{
 		hadamard << 1/root2 , 1/root2,
 			1/root2, -1/root2;
+		cNot << 1, 0, 0, 0,
+		        0, 1, 0, 0,
+		        0, 0, 0, 1,
+		        0, 0, 1, 0;
 		qBits=init_qBits;
 		amplitudes.resize((int)pow(2,qBits));
 		amplitudes[0]=complex<decimal>(1,0); //Set all qbits to zero
@@ -408,7 +414,8 @@ int main()
 // 	qc.gate1_qBit(qc.hadamard,2);
 // 	cout<<qc.status<<endl;
 
-	qc.gateN_qBit(qc.hadamard, {2} );
+// 	qc.gateN_qBit(qc.hadamard, {2} );
+    qc.gateN_qBit(qc.cNot,{1,0});
 	cout<<qc.status<<endl;
 
 	qc.status_qBits();

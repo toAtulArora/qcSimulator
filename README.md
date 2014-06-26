@@ -11,7 +11,7 @@ Authors: [Kishor Bharti] and [Atul Singh Arora]
 
 Development Phases:
 
-    A. Basic Funtionality
+    A. Basic Funtionality [almost done]
         1. Implement the state initialization   [done]
         2. Implement measurement/readout [done]
         3. Implement gates
@@ -30,7 +30,8 @@ Development Phases:
 Version
 ----
 
-infant
+Alpha 0.A
+(Phase A almost complete)
 
 Tech
 -----------

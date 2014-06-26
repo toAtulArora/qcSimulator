@@ -248,13 +248,13 @@ public:
 	{
 		statusStream.str("");
 		statusStream<<statusPrefix()<<"Current state of qubits:\n  ";
+		bool firstNonZero=false;
 		for(int i=0;i<(1<<qBits)-1;i++)
 		{
-		    bool firstNonZero=false;
 			if(nonZero(amplitudes[i]))
 			{
 			    if(firstNonZero)
-			        cout<<" + ";
+			        statusStream<<"+ ";
 				statusStream<<"("<<amplitudes[i].real()/sqrt(normalization)<<" + i"<<amplitudes[i].imag()/sqrt(normalization)<<") "<<printKet(i)<<"\n";
 				firstNonZero=true;
 			}
@@ -336,6 +336,7 @@ public:
             
             statusStream<<collapseProbabilities[i]<<"\t";
             
+            bool firstNonZero=false;        
     	    for(int j=0;j<(1<<remaining_qBits);j++)
     	    {
 	            vector< vector <int> > insertBitsData;
@@ -346,7 +347,6 @@ public:
 	            }
 	            int ii=insertBits(j,insertBitsData);
     
-                bool firstNonZero=false;
     			if(nonZero(amplitudes[ii]))
     			{
                     if(firstNonZero)

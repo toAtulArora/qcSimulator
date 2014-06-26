@@ -13,7 +13,7 @@ Development Phases:
 
     A. Basic Funtionality
         1. Implement the state initialization   [done]
-        2. Implement measurement/readout
+        2. Implement measurement/readout [working on it]
         3. Implement gates
             i. Single qBit [done]
             ii. General, N qBit [done]

@@ -7,6 +7,7 @@
 #include <bitset> //For printing some binary
 #include <Eigen/Dense>	//For matrix multiplication an all
 #include <algorithm> //For sort
+
 using namespace Eigen;
 
 using namespace std;
@@ -249,11 +250,17 @@ public:
 		statusStream<<statusPrefix()<<"Current state of qubits:\n  ";
 		for(int i=0;i<(1<<qBits)-1;i++)
 		{
+		    bool firstNonZero=false;
 			if(nonZero(amplitudes[i]))
+			{
+			    if(firstNonZero)
+			        cout<<" + ";
 				statusStream<<"("<<amplitudes[i].real()/sqrt(normalization)<<" + i"<<amplitudes[i].imag()/sqrt(normalization)<<") "<<printKet(i)<<"\n";
-			if(i+1 < (1<<qBits) -1)	//if this wasn't the last element
-				if(nonZero(amplitudes[i+1])) //and if the last element is non-zero
-					statusStream<<"+ ";
+				firstNonZero=true;
+			}
+// 			if(i+1 < (1<<qBits) -1)	//if this wasn't the last element
+				// if(nonZero(amplitudes[i+1])) //and if the last element is non-zero
+				// 	statusStream<<"+ ";
 		}
 		statusStream<<"--"<<endl;
 		status=statusStream.str();
@@ -312,8 +319,8 @@ public:
 	    collapseProbabilities.assign((1<<qBitX.size()),0);
 	    
 	    statusStream<<"Entering the loop\n Note: The results are NOT displayed normalized (normalization constant="<<normalization<<")\n";
-	    statusStream<<"Probability \t State";
-        for(int i=0;(1<<qBitX.size());i++)
+	    statusStream<<"Probability \t State\n";
+        for(int i=0;i<(1<<qBitX.size());i++)
         {
     	    for(int j=0;j<(1<<remaining_qBits);j++)
     	    {
@@ -339,20 +346,40 @@ public:
 	            }
 	            int ii=insertBits(j,insertBitsData);
     
+                bool firstNonZero=false;
     			if(nonZero(amplitudes[ii]))
+    			{
+                    if(firstNonZero)
+                        statusStream<<" + ";
     				statusStream<<"("<<amplitudes[ii].real()/sqrt(normalization)<<" + i"<<amplitudes[ii].imag()/sqrt(normalization)<<") "<<printKet(ii);
-    			if(j+1 < (1<<remaining_qBits) -1)	//if this wasn't the last element
-    				if(nonZero(amplitudes[i+1])) //and if the last element is non-zero
-    					statusStream<<" + ";
+    				firstNonZero=true;
+    			}
+    // 			if(j+1 < (1<<remaining_qBits) -1)	//if this wasn't the last element
+    				// if(nonZero(amplitudes[i+1])) //and if the last element is non-zero
+    				// 	statusStream<<" + ";
 
 	           // statusStream<<printKet(ii);
 	        }
+	        statusStream<<endl;
 
 	    }
 	    
 
-	    //TODO: implement collapsing using random variables
 	    int iCollapsed=0;
+	    
+        random_device rd;
+        mt19937 gen(rd());
+        discrete_distribution<> d(collapseProbabilities.begin(),collapseProbabilities.end());
+        // map<int, int> m;
+        // for(int n=0; n<10000; ++n) {
+            // ++m[d(gen)];
+        // }
+        // for(auto p : m) {
+            // cout << p.first << " generated " << p.second << " times\n";
+        // }
+
+        iCollapsed=d(gen);
+
 	    
 	   // for(int i=0;(1<<qBitX.size());i++)
 	   // {
@@ -374,7 +401,7 @@ public:
 	    normalization=reNormalize;
 	    amplitudes.swap(evaluatedAmplitudes);
 	    
-	    statusStream<<"Measured\n----"<<endl;
+	    statusStream<<endl<<"qBit(s) {"<<to_string(qBitX,",")<<"} measured to be "<<printNumFancy(iCollapsed)<<"\n----"<<endl;
 	    status=statusStream.str();
 	    log+=status;
 	    return collapseProbabilities;
@@ -480,8 +507,9 @@ int main()
 
 	vector<QCf::scalar> newAmplitudes;
 	newAmplitudes.assign(1<<8,0);
-	newAmplitudes[0]=qc.root2;
-	newAmplitudes[1]=qc.root2;
+	newAmplitudes[0]=1;
+// 	newAmplitudes[0]=qc.root2;
+// 	newAmplitudes[1]=qc.root2;
 	qc.cheatInitializeState(newAmplitudes);
 
 
@@ -489,11 +517,11 @@ int main()
 	cout<<qc.status<<endl;	
 	qc.status_qBits();
 	cout<<qc.status<<endl;
-// 	qc.gate1_qBit(qc.hadamard,2);
-// 	cout<<qc.status<<endl;
+	qc.gate1_qBit(qc.hadamard, 0);
+	cout<<qc.status<<endl;
 
-// 	qc.gateN_qBit(qc.hadamard, {2} );
-    qc.gateN_qBit(qc.cNot,{1,0});
+	qc.gate1_qBit(qc.hadamard, 1);
+    // qc.gateN_qBit(qc.cNot,{1,0});
 	cout<<qc.status<<endl;
 
 	qc.status_qBits();
@@ -501,6 +529,12 @@ int main()
 // 	vector <int> a;
 	//a={0,2,3,4};
 
+    qc.measure_qBits({0});
+    cout<<qc.status<<endl;
+    
+    qc.status_qBits();
+    cout<<qc.status<<endl;
+    
 	//Matrix<double,2,2> mat1,mat2;
 	//mat2<<1,1,2,2;
 	//mat1=mat2;

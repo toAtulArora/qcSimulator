@@ -16,7 +16,7 @@ Development Phases:
         2. Implement measurement/readout
         3. Implement gates
             i. Single qBit [done]
-            ii. General, N qBit [in progress]
+            ii. General, N qBit [done]
     B. Implement Usable Interface
         1. Allow for physics like state initialization (cheating method) [done]
         2. Allow for assembly language like gates implementation (look at the codes Neilson used in his book for making those figures)

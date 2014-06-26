@@ -250,7 +250,7 @@ public:
 		for(int i=0;i<(1<<qBits)-1;i++)
 		{
 			if(nonZero(amplitudes[i]))
-				statusStream<<"("<<amplitudes[i].real()/normalization<<" + i"<<amplitudes[i].imag()/normalization<<") "<<printKet(i)<<"\n";
+				statusStream<<"("<<amplitudes[i].real()/sqrt(normalization)<<" + i"<<amplitudes[i].imag()/sqrt(normalization)<<") "<<printKet(i)<<"\n";
 			if(i+1 < (1<<qBits) -1)	//if this wasn't the last element
 				if(nonZero(amplitudes[i+1])) //and if the last element is non-zero
 					statusStream<<"+ ";
@@ -300,6 +300,84 @@ public:
 		//and upon destruction, evaluatedAmplitudes will be freed from the memory :D
 		status=statusStream.str();
 		log+=status+"\n";
+	}
+	vector<decimal> measure_qBits(vector <int> qBitX)
+	{
+	    statusStream.str("");
+	    statusStream<<statusPrefix()<<"Measuring qBits {"<<to_string(qBitX,",")<<"} \n";
+	    #define remaining_qBits qBits-qBitX.size()
+	    vector<scalar> evaluatedAmplitudes;
+	    vector<decimal> collapseProbabilities;    //This stores the collapse probabilities for a given value of the measured qubits
+	    evaluatedAmplitudes.assign((1<<qBits),0); 
+	    collapseProbabilities.assign((1<<qBitX.size()),0);
+	    
+	    statusStream<<"Entering the loop\n Note: The results are NOT displayed normalized (normalization constant="<<normalization<<")\n";
+	    statusStream<<"Probability \t State";
+        for(int i=0;(1<<qBitX.size());i++)
+        {
+    	    for(int j=0;j<(1<<remaining_qBits);j++)
+    	    {
+	            vector< vector <int> > insertBitsData;
+	            int k=0;
+	            for(int &x: qBitX)
+	            {
+	                insertBitsData.push_back(vector <int> {x,getBit(i,k++)});
+	            }
+	            int ii=insertBits(j,insertBitsData);
+	            collapseProbabilities[i]+=norm(amplitudes[ii])/(normalization);
+	        }
+            
+            statusStream<<collapseProbabilities[i]<<"\t";
+            
+    	    for(int j=0;j<(1<<remaining_qBits);j++)
+    	    {
+	            vector< vector <int> > insertBitsData;
+	            int k=0;
+	            for(int &x: qBitX)
+	            {
+	                insertBitsData.push_back(vector <int> {x,getBit(i,k++)});
+	            }
+	            int ii=insertBits(j,insertBitsData);
+    
+    			if(nonZero(amplitudes[ii]))
+    				statusStream<<"("<<amplitudes[ii].real()/sqrt(normalization)<<" + i"<<amplitudes[ii].imag()/sqrt(normalization)<<") "<<printKet(ii);
+    			if(j+1 < (1<<remaining_qBits) -1)	//if this wasn't the last element
+    				if(nonZero(amplitudes[i+1])) //and if the last element is non-zero
+    					statusStream<<" + ";
+
+	           // statusStream<<printKet(ii);
+	        }
+
+	    }
+	    
+
+	    //TODO: implement collapsing using random variables
+	    int iCollapsed=0;
+	    
+	   // for(int i=0;(1<<qBitX.size());i++)
+	   // {
+        int i=iCollapsed;
+        decimal reNormalize=0;
+        for(int j=0;j<(1<<remaining_qBits);j++)
+        {
+            vector< vector <int> > insertBitsData;
+            int k=0;
+            for(int &x: qBitX)
+            {
+                insertBitsData.push_back(vector <int> {x,getBit(i,k++)});
+            }
+            int ii=insertBits(j,insertBitsData);
+            evaluatedAmplitudes[ii]=amplitudes[ii];
+            reNormalize+=norm(evaluatedAmplitudes[ii]);
+        }
+	   // }
+	    normalization=reNormalize;
+	    amplitudes.swap(evaluatedAmplitudes);
+	    
+	    statusStream<<"Measured\n----"<<endl;
+	    status=statusStream.str();
+	    log+=status;
+	    return collapseProbabilities;
 	}
 	//TODO: Understand how derived is working
 	template <typename Derived>

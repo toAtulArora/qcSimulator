@@ -369,17 +369,38 @@ public:
 	    
         random_device rd;
         mt19937 gen(rd());
-        discrete_distribution<> d(collapseProbabilities.begin(),collapseProbabilities.end());
-        // map<int, int> m;
-        // for(int n=0; n<10000; ++n) {
-            // ++m[d(gen)];
-        // }
-        // for(auto p : m) {
-            // cout << p.first << " generated " << p.second << " times\n";
-        // }
+		//NOTE: USE THIS WHEN THE TIME'S RIGHT...
+		//Now even in VS13, this doesn't work!
+        //discrete_distribution<> d(collapseProbabilities.begin(),collapseProbabilities.end());
+				
 
+		//<This is a workaround I found>
+		//http://stackoverflow.com/questions/21959404/initialising-stddiscrete-distribution-in-vs2013
+		//Modified to work!
+		////////
+		size_t iTemp(0);
+		//assert(!collapseProbabilities.empty()); // Call to weights.front() / back() would fail otherwise!
+		
+		//if (collapseProbabilities.size() == 0)
+		//{
+		//	statusStream << "Error";
+		//	status = statusStream.str();
+		//	log += status;
+		//	return collapseProbabilities;
+		//}
+			
+		discrete_distribution<> d(collapseProbabilities.size(), 
+			0,
+			1,
+			[&collapseProbabilities, &iTemp](double)
+		{
+			auto w = collapseProbabilities[iTemp];
+			++iTemp;
+			return w;
+		});
+		//<END WORKAROUND>
+		
         iCollapsed=d(gen);
-
 	    
 	   // for(int i=0;(1<<qBitX.size());i++)
 	   // {

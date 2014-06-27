@@ -1,5 +1,5 @@
 #include <iostream> //Well..
-//#include <conio.h> //For getch()
+#include <conio.h> //For getch()
 #include <vector> //For arrays
 #include <complex> //For complex numbers
 #include <math.h> //For pow etc.
@@ -7,6 +7,7 @@
 #include <bitset> //For printing some binary
 #include <Eigen/Dense>	//For matrix multiplication an all
 #include <algorithm> //For sort
+#include <regex>
 
 using namespace Eigen;
 
@@ -563,5 +564,135 @@ int main()
 	//_getch();
 	cin.get();
 	//QCf::mat2x2 m;
-    return 0;
+
+	cout << "Now testing REGEX\n";
+
+	cout << "Enter an assembly code of the following form\n" <<
+		"cnot\tq0,q1\n" << endl;
+
+    string test;
+	char inputData[20];
+    cin.getline(inputData,100);
+	test=string(inputData);
+
+    //cout<<process_ftp("1234 This is amazing",&test)<<endl<<test;    
+	//string regex_str = "(?:([a-z]+)\\s+)|(?:(?:\\s*,\\s*))([0-9]+)";
+	string regex_str = "(?:q?([0-9]|\\w+))";
+	//string regex_str = "(?:([a-z]+)\\s+|(?:\\s*,\\s*))([0-9]+)";
+
+	//string regex_str = "(?:([a-z]+)\\s+)([0-9]+)|(?:(?:\\s*,\\s*)([0-9]+))";
+	//string regex_str = "(([a-z]+)\\s+)([0-9]+)|((\\s*,\\s*)([0-9]+))";
+	//string regex_str = "(?:([a-z]+)\\s)*";
+    //string regex_str="[ \\t]*([a-zA-Z0-9]+)[ \\t]+(q?[0-9]+)(?:[ \\t]*,[ \\t]*(q?[0-9]+))*";
+	//string regex_str = "[ \\t]*([a-z]+)(?:[ \\t]*,[ \\t]*([a-z]+))*";
+	//string regex_str = "(?:\\s)*([a-zA-Z0-9]+) [0-9]+";
+    //string regex_str="\\([a-zA-Z0-9]+\\)\\1";
+    // regex rx(s);
+    //string regex_str = "(?:[a-z_][a-z_0-9]*)\\.([a-z0-9]+)";
+    // string regex_str="[a-z]*\\.*";
+    // regex rx(regex_str, regex_constants::icase);
+    // regex rx(regex_str);
+    // regex rx(regex_str,regex_constants::grep | regex_constants::icase);
+    regex rx(regex_str);
+	//regex rx("(?:([a-z]+)\\s+)([0-9]+)|(?:(?:\\s*,\\s*)([0-9]+))");
+
+    // regex rx("[a-z]*\\.*");
+    smatch m;
+
+    //string line;
+    //cin>>line;
+    // sregex_iterator it(line.begin(),line.end(),rx);
+    // sregex_iterator it_end;
+
+    // while(it != it_end)
+    // {
+    //     cout<< *it <<endl;
+    //     it++;
+    // }
+
+//std::string::const_iterator text_iter = text.cbegin();
+//compiledRegex = std::regex(regex, std::tr1::regex_constants::extended);
+//
+//while (regex_search(text_iter, text.end(), results, compiledRegex))
+//{
+//    int count = results.size();
+//    // Alloc pointer array based on count * sizeof(mystruct).
+//    for ( std::cmatch::iterator group = results.begin();
+//          group != results.end();
+//          ++group )
+//    {
+//        // If you uses grouping in your search here you can access each group
+//    }
+//
+//   std::cout << std::string(results[0].first, results[0].second) << endl;
+//   text_iter = results[0].second;
+//}
+
+	cout << "About to match ["<<test<<"] with pattern ["<<regex_str<<"]\n";
+	auto wordsBegin = sregex_iterator(test.begin(), test.end(), rx);
+	auto wordsEnd = sregex_iterator();
+
+	auto n = distance(wordsBegin, wordsEnd);
+	if (n)
+	{
+		cout << "The epxression matched, " << n << " times. Now printing extractions\nPress any key\n";
+		//cin.get();
+		// string operation = (m[0]);
+		// string qBit1 = m[2];
+		// string qBit2 = m[3];
+		//THIS WORKS PARTIALLY
+		for (sregex_iterator i = wordsBegin; i != wordsEnd; i++)
+		{
+			m = *i;
+			cout << "String output:" << m.str()<<endl;
+			cout << "The expression was:" << m[0] << endl;
+			for (int mI = 1; mI < m.size(); mI++)
+			{
+				if (m[mI].length())
+					cout << "Info [" << mI << "] " << m[mI] << endl;
+			}
+			cout << endl << endl;
+		}
+
+		//m = *wordsBegin;
+		//cout << "The expression was:" << m[0] << endl;
+		//for (int mI = 0; mI < m.size(); mI++)
+		//{
+		//	cout << "Info [" << mI << "] " << m[mI] << endl;
+		//}
+		//cout << endl << endl;
+
+		//cout<<"operation:"<<m[1]<<endl
+		//          <<"qBit1:"<<m[2]<<endl
+		//          <<"qBit2:"<<m[2]<<endl;		
+	}
+
+
+	////cin.get();
+ //   if (regex_match(test,m,rx) )
+ //   {
+	//	cout << "The epxression matched, now printing extractions\nPress any key\n";
+	//	//cin.get();
+	//	// string operation = (m[0]);
+ //       // string qBit1 = m[2];
+ //       // string qBit2 = m[3];
+	//	
+	//	cout << "The expression was:" << m[0] <<endl;
+	//	for (int mI = 0; mI < m.size(); mI++)
+	//	{
+	//		cout << "Info [" << mI << "] " << m[mI] << endl;
+	//	}
+	//	//cout<<"operation:"<<m[1]<<endl
+ // //          <<"qBit1:"<<m[2]<<endl
+ // //          <<"qBit2:"<<m[2]<<endl;		
+ //   }
+ //   else
+ //   {
+ //       cout<<"The expression didn't match";
+ //   }
+
+	_getch();
+	//cin.get();
+	//cin.get();
+	return 0;
 }

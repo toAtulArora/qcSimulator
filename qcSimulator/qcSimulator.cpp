@@ -188,6 +188,7 @@ public:
 	}
 
 public:	
+	map<string, Matrix<scalar, Dynamic, Dynamic> > gates;
 	typedef Matrix< scalar, 2, 2> mat2x2;
 	typedef Matrix< scalar, 4, 4> mat4x4;
 	typedef Matrix< scalar, 2, 1> mat2x1;
@@ -204,7 +205,7 @@ public:
 
 	mat2x2 hadamard;	
 	mat4x4 cNot;
-	map<string, Matrix<scalar, Dynamic, Dynamic> > gates;
+	
 	//tMat2x2 hadamard2;
     
 	stringstream statusStream;
@@ -231,6 +232,35 @@ public:
 			0, 1, 0, 0,
 			0, 0, 0, 1,
 			0, 0, 1, 0;
+		gates["x"].resize(2, 2);
+		gates["x"] << 
+			0, 1,
+			1, 0;
+		gates["y"].resize(2, 2);
+		gates["y"] <<
+			0, scalar(0,-1),
+			scalar(0,1), 0;
+		gates["z"].resize(2, 2);
+		gates["z"] <<
+			1, 0,
+			0, -1;
+		gates["s"].resize(2, 2);
+		gates["s"] <<
+			1, 0,
+			0, scalar(0,1);
+		gates["swap"].resize(4, 4);
+		gates["swap"] <<
+			1, 0, 0, 0,
+			0, 0, 1, 0,
+			0, 1, 0, 0,
+			0, 0, 0, 1;
+		gates["cz"].resize(4, 4);
+		gates["cz"] <<
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			0, 0, 0, -1;
+
 		qBits=init_qBits;
 		amplitudes.resize((int)pow(2,qBits));
 		amplitudes[0]=complex<decimal>(1,0); //Set all qbits to zero
@@ -703,35 +733,42 @@ int main()
 	cout<<qc.status<<endl;	
 	qc.status_qBits();
 	cout<<qc.status<<endl;
-	qc.gate1_qBit(qc.hadamard, 0);
-	cout<<qc.status<<endl;
 
-	qc.gate1_qBit(qc.hadamard, 1);
-    // qc.gateN_qBit(qc.cNot,{1,0});
-	cout<<qc.status<<endl;
+	//qc.gate1_qBit(qc.hadamard, 0);
+	//cout<<qc.status<<endl;
 
-	qc.status_qBits();
-	cout<<qc.status<<endl;
-// 	vector <int> a;
-	//a={0,2,3,4};
+	//qc.gate1_qBit(qc.hadamard, 1);
+ //   // qc.gateN_qBit(qc.cNot,{1,0});
+	//cout<<qc.status<<endl;
 
-    qc.measure_qBits({0});
-    cout<<qc.status<<endl;
-    
-    qc.status_qBits();
-    cout<<qc.status<<endl;
+	//qc.status_qBits();
+	//cout<<qc.status<<endl;
+
+ //   qc.measure_qBits({0});
+ //   cout<<qc.status<<endl;
+ //   
+ //   qc.status_qBits();
+ //   cout<<qc.status<<endl;
     
 	//cin.get();
+
+	/////////////Adding custom gates
+	//qc.gates["x"].resize(2, 2);
+	//qc.gates["x"] << 
+	//	0, 1,
+	//	1, 0;
 
 	cout << "Now entering qasm parser mode\n";
 	cout << "Enter an assembly code of the following form\n" <<
 		"cnot\tq0,q1\n" <<
-		"To exit, input q\n\n";
-	
+		"To exit, input q";
+	cout << "\n-----\n\n\n";
 	string test="";
 	char inputData[20];
+	int instructionCount = 0;
 	while (1)
-	{				
+	{
+		cout << "[" << instructionCount++ << "] >";
 		cin.getline(inputData, 100);
 		test = string(inputData);
 		if (test.compare("q") == 0)

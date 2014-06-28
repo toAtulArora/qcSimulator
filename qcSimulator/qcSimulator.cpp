@@ -186,7 +186,7 @@ public:
 		else
 			return mBlank;
 	}
-
+	const int maxIntForPrint = 10;
 public:	
 	map<string, Matrix<scalar, Dynamic, Dynamic> > gates;
 	typedef Matrix<scalar,Dynamic,Dynamic> (pGateType)(vector<int>& param);
@@ -229,7 +229,7 @@ public:
 		gates["h"].resize(2, 2);
 		gates["h"] << 
 			1 / root2, 1 / root2, 
-			1 / root2, 1 / root2;
+			1 / root2, -1 / root2;
 		gates["cnot"].resize(4, 4);
 		gates["cnot"] << 
 			1, 0, 0, 0,
@@ -499,6 +499,7 @@ public:
 	void gateN_qBit(const MatrixBase<Derived>& gate, vector <int> qBitX)
 	{
 	    statusStream.str("");
+		
 		if (gate.cols() != (1 << qBitX.size()) )
 		{
 			statusStream << gate.cols() << "!=" << (1<<qBitX.size())<<endl<<
@@ -507,7 +508,11 @@ public:
 			log += status;
 			return;
 		}
-	    statusStream<<statusPrefix()<<"Applying the following on {"<<to_string(qBitX,",")<<"} qubits\n"<<gate<<endl;
+		bool rpm = (gate.cols() < maxIntForPrint);
+		if (rpm)
+			statusStream << statusPrefix() << "Applying the following on {" << to_string(qBitX, ",") << "} qubits\n" << gate << endl;
+		else
+			statusStream << statusPrefix() << "Applying the operation\n";
 		//int num_qBits=qBitX.size();             //Number of qbits involved in the operation of the gate, eg 2
         vector<scalar> evaluatedAmplitudes;
         evaluatedAmplitudes.assign((1<<qBits), 0);
@@ -515,7 +520,8 @@ public:
         Matrix< scalar, Dynamic, Dynamic> transformedBasis (1<<qBitX.size(),1); //Same thing for the transformed basis
         #define remaining_qBits qBits-qBitX.size()
         //TODO: assert that the matrix's dimensiona nd size(qBitX) are equal
-        statusStream<<"Entering the loop\n Note: The results aren't normalized (normalization constant="<<normalization<<")\n";
+		if (rpm)
+			statusStream<<"Entering the loop\n Note: The results aren't normalized (normalization constant="<<normalization<<")\n";
         for(int j=0;j<(1<<remaining_qBits);j++)
         {
             // statusStream<<"j="<<printNumFancy(j)<<endl;
@@ -541,9 +547,11 @@ public:
             }
             if(notBlank)
             {
-                statusStream<<"The basis for the given j (= "<<printNumFancy(j)<<") is \n"<<basis<<endl;
+				if (rpm)
+					statusStream<<"The basis for the given j (= "<<printNumFancy(j)<<") is \n"<<basis<<endl;
                 transformedBasis=gate*basis;
-                statusStream<<"The transformed basis is \n"<<transformedBasis<<endl;
+                if (rpm)
+					statusStream<<"The transformed basis is \n"<<transformedBasis<<endl;
                 //The following seems duplicated, but there is little point in converting this to a function
                 //The last assignment is different, that's all.
                 for(int i=0;i<(1<<qBitX.size());i++)
@@ -556,8 +564,8 @@ public:
                     evaluatedAmplitudes[ii]+=transformedBasis(i);
                 }
             }
-        }
-        statusStream<<"Evaluation completed"<<endl<<"----"<<endl;
+        }		
+		statusStream<<"Evaluation completed"<<endl<<"----"<<endl;
         amplitudes.swap(evaluatedAmplitudes);
         status=statusStream.str();
         log+=status;
@@ -658,8 +666,8 @@ public:
 					///
 					//inst.execute();		
 					combinedStatus << status;
-					status_qBits();
-					combinedStatus << status;
+					//status_qBits();
+					//combinedStatus << status;
 					//Matrix<scalar, Dynamic, Dynamic> testMat2;
 					//testMat2.resize(2, 2);
 					//Matrix<scalar, 2, 2> testMat2;
@@ -684,18 +692,18 @@ public:
 						init_qBit(inst.param[0], inst.param[1]);
 					else if (inst.command.compare("measure") == 0)
 						measure_qBits(inst.param);
-					else if (gates.find(inst.command) != gates.end())
+					else if (gates.find(inst.command) != gates.end())	//fixed gates (no parameters needed)
 						gateN_qBit(gates[inst.command], inst.param);
-					else if (pGates.find(inst.command) != pGates.end())
+					else if (pGates.find(inst.command) != pGates.end())	//gates that need parameters!
 						gateN_qBit(pGates[inst.command](inst.param), inst.param);
 					else if (inst.command.compare("nop") == 0)
-						status = "NOP: No Operation\n----\n";
+						combinedStatus<<"NOP: No Operation\n----\n";
 					else
-						status = "Couldn't understand the instruction.\n----\n";
+						combinedStatus<<"Couldn't understand the instruction.\n----\n";
 					
 					//else
 						
-					combinedStatus << status;
+					//combinedStatus << status;
 					status_qBits();
 					combinedStatus << status;
 					status = combinedStatus.str();
@@ -737,11 +745,11 @@ Matrix < complex <decimal>, Dynamic, Dynamic> ft (vector<int>& param)
 			//cout << "DOING SOMETHING j=" << j <<" k="<<k<< endl;
 			//ftMat(j, k) = exp(complex<float>(0, 2 * M_PI));
 			ftMat(j,k) = exp(complex<decimal>(0, (- twoPiByN * j * k))) / rootN;
-		}		
+		}
 	}
 	cout << "WOAH!";
-	cout << ftMat;
-	cout << endl << endl;
+	//cout << ftMat;
+	//cout << endl << endl;
 	//param.erase(param.begin(), param.begin() + 2);
 	return ftMat;
 }
@@ -749,11 +757,11 @@ Matrix < complex <decimal>, Dynamic, Dynamic> ft (vector<int>& param)
 int main()
 {
 	typedef QC<float> QCf;
-	QCf qc(8);
+	QCf qc(15);
 	cout<<qc.status<<endl;
 
 	vector<QCf::scalar> newAmplitudes;
-	newAmplitudes.assign(1<<8,0);
+	newAmplitudes.assign(1<<15,0);
 	newAmplitudes[0]=1;
 // 	newAmplitudes[0]=qc.root2;
 // 	newAmplitudes[1]=qc.root2;
@@ -805,7 +813,7 @@ int main()
 		"To exit, input q";
 	cout << "\n-----\n\n\n";
 	string test="";
-	char inputData[20];
+	char inputData[30];
 	int instructionCount = 0;
 	while (1)
 	{

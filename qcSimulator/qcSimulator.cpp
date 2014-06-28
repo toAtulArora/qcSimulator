@@ -1,5 +1,5 @@
 #include <iostream> //Well..
-#include <conio.h> //For getch()
+//#include <conio.h> //For getch()
 #include <vector> //For arrays
 #include <complex> //For complex numbers
 #include <math.h> //For pow etc.
@@ -175,11 +175,31 @@ public:
 		temp<<"|"<<(bitset<8>) n << " (" <<n<<") >";
 		return temp.str();
 	}
+
+	Matrix<scalar, Dynamic, Dynamic> gateNameToMatrix(string gateName)
+	{
+		Matrix<scalar, Dynamic, Dynamic> mBlank(0, 0);
+		if (gateName.compare("h") == 0)
+			return hadamard;
+		else if (gateName.compare("cnot") == 0)
+			return cNot;
+		else
+			return mBlank;
+	}
+
 public:	
 	typedef Matrix< scalar, 2, 2> mat2x2;
 	typedef Matrix< scalar, 4, 4> mat4x4;
 	typedef Matrix< scalar, 2, 1> mat2x1;
-	
+	class instruction
+	{
+	public:
+		string command;
+		vector<int> param;
+		//void execute()
+		//{
+		//}
+	};
 	//typedef Matrix< complex<decimal>, 2, 2> tMat2x2;
 
 	mat2x2 hadamard;	
@@ -249,6 +269,7 @@ public:
 	{
 		statusStream.str("");
 		statusStream<<statusPrefix()<<"Current state of qubits:\n  ";
+		decimal sqrtNormalization = sqrt(normalization);
 		bool firstNonZero=false;
 		for(int i=0;i<(1<<qBits)-1;i++)
 		{
@@ -256,7 +277,7 @@ public:
 			{
 			    if(firstNonZero)
 			        statusStream<<"+ ";
-				statusStream<<"("<<amplitudes[i].real()/sqrt(normalization)<<" + i"<<amplitudes[i].imag()/sqrt(normalization)<<") "<<printKet(i)<<"\n";
+				statusStream<<"("<<amplitudes[i].real()/sqrtNormalization<<" + i"<<amplitudes[i].imag()/sqrtNormalization<<") "<<printKet(i)<<"\n";
 				firstNonZero=true;
 			}
 // 			if(i+1 < (1<<qBits) -1)	//if this wasn't the last element
@@ -433,6 +454,14 @@ public:
 	void gateN_qBit(const MatrixBase<Derived>& gate, vector <int> qBitX)
 	{
 	    statusStream.str("");
+		if (gate.cols() != (1 << qBitX.size()) )
+		{
+			statusStream << gate.cols() << "!=" << (1<<qBitX.size())<<endl<<
+			"Invalid operation (The number of inputs given is not correct for the gate used)";
+			status = statusStream.str();
+			log += status;
+			return;
+		}
 	    statusStream<<statusPrefix()<<"Applying the following on {"<<to_string(qBitX,",")<<"} qubits\n"<<gate<<endl;
 		//int num_qBits=qBitX.size();             //Number of qbits involved in the operation of the gate, eg 2
         vector<scalar> evaluatedAmplitudes;
@@ -518,6 +547,119 @@ public:
 		status=statusStream.str();
 		log+=status+"\n";
 	}
+	
+	//Returns the parsing log
+	string parse(string oneLine)
+	{
+		instruction inst;
+		string regex_syntax = "^\\s*(?=#)|^\\s*def.*|^\\s*qubit.*|^\\s*\\w+\\s+[a-z]?\\d+(?:\\s*,\\s*[a-z]?\\d+)*\\s*(?:(?=#)(?:.*))?$";
+		string regex_gate = "^\\s*(?!def)(?!qubit)^\\s*[a-zA-Z0-9]+\\s+[a-z]?[0-9]+(?:\\s*,\\s*[a-z]?\\d+)*\\s*(?:(?=#)(?:.*))?$";
+		string regex_extract = "(?:q?([0-9]|\\w+))";
+		stringstream parseLog;
+		stringstream combinedStatus;
+		parseLog.str("");
+		combinedStatus.str("");
+
+		regex rx;
+		smatch m;
+
+		rx = regex(regex_syntax);
+
+		if (regex_match(oneLine, rx))
+		{
+			//parseLog << "Syntax is found to be correct"<<endl;
+			rx = regex(regex_gate);
+			if (regex_match(oneLine, rx))
+			{
+				rx = regex(regex_extract);
+				parseLog << "About to match [" << oneLine << "] with pattern [" << regex_extract << "]\n";
+				auto wordsBegin = sregex_iterator(oneLine.begin(), oneLine.end(), rx);
+				auto wordsEnd = sregex_iterator();
+
+				auto n = distance(wordsBegin, wordsEnd);
+				if (n)
+				{
+					int count = 0;
+					parseLog << "The epxression matched, " << n << " times. \nNow printing extractions\n\n";
+					for (sregex_iterator i = wordsBegin; i != wordsEnd; i++,count++)
+					{
+						m = *i;
+						parseLog << "String output:" << m.str() << endl;
+						parseLog << "The expression was:" << m[0] << endl;
+						if (count == 0)
+						{
+							inst.command = m[1];
+							//cout << "The gate is" << m[1] << endl;
+						}
+						else
+						{
+							inst.param.push_back(atoi(m[1].str().c_str()));
+							//cout << m[1] << ",";
+							//cout << atoi(m[1].str().c_str());							
+						}
+
+						for (int mI = 1; mI < m.size(); mI++)
+						{
+							if (m[mI].length())
+							{
+								parseLog << "Info [" << mI << "] " << m[mI] << endl;
+							}
+						}
+						parseLog << endl << endl;
+					}
+					cout << endl;
+					status = "Valid command; Executing now";
+					log += status;
+					///
+					//inst.execute();		
+					combinedStatus << status;
+					status_qBits();
+					combinedStatus << status;
+					//Matrix<scalar, Dynamic, Dynamic> testMat2;
+					//testMat2.resize(2, 2);
+					//Matrix<scalar, 2, 2> testMat2;
+					//testMat2 << 1, 2, 3, 4;
+					//cout << testMat2 << "THIS SHOULD ANYWAY HAVE WORKED!\n";
+					//cin.get();
+					//testMat.resize(2, 2);
+					//Matrix<scalar, Dynamic, Dynamic> testMat;
+					//testMat = testMat2;
+					//const Matrix<scalar, Dynamic, Dynamic>& testMat =testMat2;
+					
+					//cout << testMat.rows() << "," << testMat.cols();
+					//cout << testMat;
+					//cin.get();
+					//cout << parseLog.str() << endl;
+					//cout << endl << "PRINTING ARRAY:["<<to_string(inst.param,",") <<"]"<< endl;
+					//cout << gateNameToMatrix("h");
+					//cin.get();
+					//if (gateNameToMatrix(inst.command).cols == inst.param.size())
+					gateN_qBit(gateNameToMatrix(inst.command), inst.param);
+					//else
+						
+					combinedStatus << status;
+					status_qBits();
+					combinedStatus << status;
+					status = combinedStatus.str();
+
+				}
+			}
+			else
+			{
+				parseLog << "Command not implemented; ignored" << endl;
+				status = parseLog.str();
+				log += status;
+			}
+
+		}
+		else
+		{
+			parseLog << "Invalid syntax, ignoring line";
+			status = parseLog.str();
+			log += status;
+		}
+		return parseLog.str();
+	}
 };
 
 
@@ -557,109 +699,26 @@ int main()
     qc.status_qBits();
     cout<<qc.status<<endl;
     
-	cin.get();
+	//cin.get();
 
 	cout << "Now testing REGEX\n";
 	cout << "Enter an assembly code of the following form\n" <<
-		"cnot\tq0,q1\n" << endl;
-
-    string test;
+		"cnot\tq0,q1\n" <<
+		"To exit, input q\n\n";
+	
+	string test="";
 	char inputData[20];
-    cin.getline(inputData,100);
-	test=string(inputData);
+	while (test.compare("q") != 0)
+	{				
+		cin.getline(inputData, 100);
+		test = string(inputData);
 
-    //cout<<process_ftp("1234 This is amazing",&test)<<endl<<test;    
-	//string regex_str = "(?:([a-z]+)\\s+)|(?:(?:\\s*,\\s*))([0-9]+)";
-	string regex_syntax = "^\\s*(?=#)|^\\s*def.*|^\\s*qubit.*|^\\s*\\w+\\s+[a-z]?\\d+(?:\\s*,\\s*[a-z]?\\d+)*\\s*(?:(?=#)(?:.*))?$";
-	string regex_gate = "^\\s*(?!def)(?!qubit)^\\s*[a-zA-Z0-9]+\\s+[a-z]?[0-9]+(?:\\s*,\\s*[a-z]?\\d+)*\\s*(?:(?=#)(?:.*))?$";
-	string regex_extract = "(?:q?([0-9]|\\w+))";
-	//string regex_str = "(?:([a-z]+)\\s+|(?:\\s*,\\s*))([0-9]+)";
-
-	//string regex_str = "(?:([a-z]+)\\s+)([0-9]+)|(?:(?:\\s*,\\s*)([0-9]+))";
-	//string regex_str = "(([a-z]+)\\s+)([0-9]+)|((\\s*,\\s*)([0-9]+))";
-	//string regex_str = "(?:([a-z]+)\\s)*";
-    //string regex_str="[ \\t]*([a-zA-Z0-9]+)[ \\t]+(q?[0-9]+)(?:[ \\t]*,[ \\t]*(q?[0-9]+))*";
-	//string regex_str = "[ \\t]*([a-z]+)(?:[ \\t]*,[ \\t]*([a-z]+))*";
-	//string regex_str = "(?:\\s)*([a-zA-Z0-9]+) [0-9]+";
-    //string regex_str="\\([a-zA-Z0-9]+\\)\\1";
-    // regex rx(s);
-    //string regex_str = "(?:[a-z_][a-z_0-9]*)\\.([a-z0-9]+)";
-    // string regex_str="[a-z]*\\.*";
-    // regex rx(regex_str, regex_constants::icase);
-    // regex rx(regex_str);
-    // regex rx(regex_str,regex_constants::grep | regex_constants::icase);
-    //regex rx(regex_extract);
-	regex rx;	
-    smatch m;
-
-	rx = regex(regex_syntax);
-
-	if (regex_match(test, rx))
-	{
-		//cout << "Syntax is found to be correct"<<endl;
-		rx = regex(regex_gate);
-		if (regex_match(test, rx))
-		{
-			rx = regex(regex_extract);
-			cout << "About to match [" << test << "] with pattern [" << regex_extract << "]\n";
-			auto wordsBegin = sregex_iterator(test.begin(), test.end(), rx);
-			auto wordsEnd = sregex_iterator();
-
-			auto n = distance(wordsBegin, wordsEnd);
-			if (n)
-			{
-				cout << "The epxression matched, " << n << " times. Now printing extractions\nPress any key\n";
-				for (sregex_iterator i = wordsBegin; i != wordsEnd; i++)
-				{
-					m = *i;
-					cout << "String output:" << m.str() << endl;
-					cout << "The expression was:" << m[0] << endl;
-					for (int mI = 1; mI < m.size(); mI++)
-					{
-						if (m[mI].length())
-							cout << "Info [" << mI << "] " << m[mI] << endl;
-					}
-					cout << endl << endl;
-				}
-			}
-		}
-		else
-		{
-			cout << "Command not implemented; ignored" << endl;
-		}
-
+		cout << qc.parse(test) << endl << "----" << endl;
+		//qc.parse(test);
+		cout << qc.status << endl;
+		//cout << "Hello";
 	}
-	else
-	{
-		cout << "Invalid syntax, ignoring line";
-	}
-
-
-	////cin.get();
- //   if (regex_match(test,m,rx) )
- //   {
-	//	cout << "The epxression matched, now printing extractions\nPress any key\n";
-	//	//cin.get();
-	//	// string operation = (m[0]);
- //       // string qBit1 = m[2];
- //       // string qBit2 = m[3];
-	//	
-	//	cout << "The expression was:" << m[0] <<endl;
-	//	for (int mI = 0; mI < m.size(); mI++)
-	//	{
-	//		cout << "Info [" << mI << "] " << m[mI] << endl;
-	//	}
-	//	//cout<<"operation:"<<m[1]<<endl
- // //          <<"qBit1:"<<m[2]<<endl
- // //          <<"qBit2:"<<m[2]<<endl;		
- //   }
- //   else
- //   {
- //       cout<<"The expression didn't match";
- //   }
-
-	_getch();
-	//cin.get();
+	//_getch();
 	//cin.get();
 	return 0;
 }

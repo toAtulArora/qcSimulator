@@ -7,8 +7,8 @@
 #include <bitset> //For printing some binary
 #include <Eigen/Dense>	//For matrix multiplication an all
 #include <algorithm> //For sort
-#include <regex>
-
+#include <regex>		//For parsing assembly like input
+#include <map>			//For mapping string to matrix/gate
 using namespace Eigen;
 
 using namespace std;
@@ -204,6 +204,7 @@ public:
 
 	mat2x2 hadamard;	
 	mat4x4 cNot;
+	map<string, Matrix<scalar, Dynamic, Dynamic> > gates;
 	//tMat2x2 hadamard2;
     
 	stringstream statusStream;
@@ -220,6 +221,16 @@ public:
 		        0, 1, 0, 0,
 		        0, 0, 0, 1,
 		        0, 0, 1, 0;
+		gates["h"].resize(2, 2);
+		gates["h"] << 
+			1 / root2, 1 / root2, 
+			1 / root2, 1 / root2;
+		gates["cnot"].resize(4, 4);
+		gates["cnot"] << 
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 0, 1,
+			0, 0, 1, 0;
 		qBits=init_qBits;
 		amplitudes.resize((int)pow(2,qBits));
 		amplitudes[0]=complex<decimal>(1,0); //Set all qbits to zero
@@ -457,7 +468,7 @@ public:
 		if (gate.cols() != (1 << qBitX.size()) )
 		{
 			statusStream << gate.cols() << "!=" << (1<<qBitX.size())<<endl<<
-			"Invalid operation (The number of inputs given is not correct for the gate used)";
+			"Invalid operation (The number of inputs given is not correct for the gate used)\n-----------\n";
 			status = statusStream.str();
 			log += status;
 			return;
@@ -607,8 +618,8 @@ public:
 						}
 						parseLog << endl << endl;
 					}
-					cout << endl;
-					status = "Valid command; Executing now";
+					//cout << endl;
+					status = "\nParser: Valid syntax; Attempting execution now\n------\n";
 					log += status;
 					///
 					//inst.execute();		
@@ -634,7 +645,18 @@ public:
 					//cout << gateNameToMatrix("h");
 					//cin.get();
 					//if (gateNameToMatrix(inst.command).cols == inst.param.size())
-					gateN_qBit(gateNameToMatrix(inst.command), inst.param);
+					//gateN_qBit(gateNameToMatrix(inst.command), inst.param);
+					if (inst.command.compare("init") == 0 && inst.param.size()==2)
+						init_qBit(inst.param[0], inst.param[1]);
+					else if (inst.command.compare("measure")==0)
+						measure_qBits(inst.param);
+					else if (gates.find(inst.command) != gates.end())
+						gateN_qBit(gates[inst.command], inst.param);
+					else if (inst.command.compare("nop") == 0)
+						status = "NOP: No Operation\n----\n";
+					else
+						status = "Couldn't understand the instruction.\n----\n";
+					
 					//else
 						
 					combinedStatus << status;
@@ -701,22 +723,26 @@ int main()
     
 	//cin.get();
 
-	cout << "Now testing REGEX\n";
+	cout << "Now entering qasm parser mode\n";
 	cout << "Enter an assembly code of the following form\n" <<
 		"cnot\tq0,q1\n" <<
 		"To exit, input q\n\n";
 	
 	string test="";
 	char inputData[20];
-	while (test.compare("q") != 0)
+	while (1)
 	{				
 		cin.getline(inputData, 100);
 		test = string(inputData);
-
-		cout << qc.parse(test) << endl << "----" << endl;
-		//qc.parse(test);
+		if (test.compare("q") == 0)
+		{
+			break;
+			cout << "\n~poof~\n";
+		}
+			//break;
+		//cout << qc.parse(test) << endl << "----" << endl;
+		qc.parse(test);
 		cout << qc.status << endl;
-		//cout << "Hello";
 	}
 	//_getch();
 	//cin.get();

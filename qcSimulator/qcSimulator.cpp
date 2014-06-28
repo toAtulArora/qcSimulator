@@ -189,6 +189,10 @@ public:
 
 public:	
 	map<string, Matrix<scalar, Dynamic, Dynamic> > gates;
+	typedef Matrix<scalar,Dynamic,Dynamic> (pGateType)(vector<int> param);
+	//think of this as int* (you'll put a function pointer, thus pGateType*)
+	map<string, pGateType*> pGates;
+
 	typedef Matrix< scalar, 2, 2> mat2x2;
 	typedef Matrix< scalar, 4, 4> mat4x4;
 	typedef Matrix< scalar, 2, 1> mat2x1;
@@ -714,6 +718,14 @@ public:
 	}
 };
 
+Matrix < complex <float>, Dynamic, Dynamic> paramH(vector<int> param)
+{
+	Matrix <complex <float>, Dynamic, Dynamic> aha;
+	aha.resize(2, 2);
+	aha << 1, 0, 0, 1;
+	cout << "WOAH!";
+	return aha;
+}
 
 int main()
 {
@@ -749,15 +761,23 @@ int main()
  //   
  //   qc.status_qBits();
  //   cout<<qc.status<<endl;
-    
-	//cin.get();
+	
+	//cin.get();	
+
+	//QCf::pGateType fH = &paramH;
+	//Matrix < complex <float>, Dynamic, Dynamic>(*paramHstar)(vector<int> param);
+	//paramHstar = paramH;
+	qc.pGates["paramh"] = paramH;
+	qc.pGates["paramh"]({ 0, 1 });
 
 	/////////////Adding custom gates
 	//qc.gates["x"].resize(2, 2);
 	//qc.gates["x"] << 
 	//	0, 1,
 	//	1, 0;
-
+	//Continuous variable quantum computation
+	//review articles
+	//-------------------------
 	cout << "Now entering qasm parser mode\n";
 	cout << "Enter an assembly code of the following form\n" <<
 		"cnot\tq0,q1\n" <<

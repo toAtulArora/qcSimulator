@@ -1,56 +1,56 @@
-﻿Build started 28/06/2014 02:59:39 PM.
+﻿Build started 28/06/2014 04:44:54 PM.
      1>Project "C:\Users\Atul\Documents\gitHub\qcSimulator\qcSimulator\qcSimulator.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt qcSimulator.cpp
          qcSimulator.cpp
-     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(218): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(216) : while compiling class template member function 'QC<float>::QC(int)'
-                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(721) : see reference to function template instantiation 'QC<float>::QC(int)' being compiled
-                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(721) : see reference to class template instantiation 'QC<float>' being compiled
-     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(583): warning C4018: '<' : signed/unsigned mismatch
-                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(578) : while compiling class template member function 'void QC<float>::cheatInitializeState(std::vector<std::complex<float>,std::allocator<_Ty>> &)'
+     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(222): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(220) : while compiling class template member function 'QC<float>::QC(int)'
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(733) : see reference to function template instantiation 'QC<float>::QC(int)' being compiled
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(733) : see reference to class template instantiation 'QC<float>' being compiled
+     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(587): warning C4018: '<' : signed/unsigned mismatch
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(582) : while compiling class template member function 'void QC<float>::cheatInitializeState(std::vector<std::complex<float>,std::allocator<_Ty>> &)'
                  with
                  [
                      _Ty=std::complex<float>
                  ]
-                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(729) : see reference to function template instantiation 'void QC<float>::cheatInitializeState(std::vector<std::complex<float>,std::allocator<_Ty>> &)' being compiled
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(741) : see reference to function template instantiation 'void QC<float>::cheatInitializeState(std::vector<std::complex<float>,std::allocator<_Ty>> &)' being compiled
                  with
                  [
                      _Ty=std::complex<float>
                  ]
-     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(642): warning C4018: '<' : signed/unsigned mismatch
-                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(594) : while compiling class template member function 'std::string QC<float>::parse(std::string)'
-                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(781) : see reference to function template instantiation 'std::string QC<float>::parse(std::string)' being compiled
-     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(388): warning C4554: '<<' : check operator precedence for possible error; use parentheses to clarify precedence
-                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(375) : while compiling class template member function 'std::vector<decimal,std::allocator<_Ty>> QC<decimal>::measure_qBits(std::vector<int,std::allocator<int>>)'
+     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(646): warning C4018: '<' : signed/unsigned mismatch
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(598) : while compiling class template member function 'std::string QC<float>::parse(std::string)'
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(801) : see reference to function template instantiation 'std::string QC<float>::parse(std::string)' being compiled
+     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(392): warning C4554: '<<' : check operator precedence for possible error; use parentheses to clarify precedence
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(379) : while compiling class template member function 'std::vector<decimal,std::allocator<_Ty>> QC<decimal>::measure_qBits(std::vector<int,std::allocator<int>>)'
                  with
                  [
                      decimal=float
          ,            _Ty=float
                  ]
-                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(682) : see reference to function template instantiation 'std::vector<decimal,std::allocator<_Ty>> QC<decimal>::measure_qBits(std::vector<int,std::allocator<int>>)' being compiled
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(686) : see reference to function template instantiation 'std::vector<decimal,std::allocator<_Ty>> QC<decimal>::measure_qBits(std::vector<int,std::allocator<int>>)' being compiled
                  with
                  [
                      decimal=float
          ,            _Ty=float
                  ]
-     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(403): warning C4554: '<<' : check operator precedence for possible error; use parentheses to clarify precedence
-     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(472): warning C4554: '<<' : check operator precedence for possible error; use parentheses to clarify precedence
-     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(515): warning C4554: '<<' : check operator precedence for possible error; use parentheses to clarify precedence
-                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(684) : see reference to function template instantiation 'void QC<float>::gateN_qBit<Derived>(const Eigen::MatrixBase<Derived> &,std::vector<int,std::allocator<_Ty>>)' being compiled
+     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(407): warning C4554: '<<' : check operator precedence for possible error; use parentheses to clarify precedence
+     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(476): warning C4554: '<<' : check operator precedence for possible error; use parentheses to clarify precedence
+     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(519): warning C4554: '<<' : check operator precedence for possible error; use parentheses to clarify precedence
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(688) : see reference to function template instantiation 'void QC<float>::gateN_qBit<Derived>(const Eigen::MatrixBase<Derived> &,std::vector<int,std::allocator<_Ty>>)' being compiled
                  with
                  [
                      Derived=Eigen::Matrix<std::complex<float>,-1,-1,0,-1,-1>
          ,            _Ty=int
                  ]
-                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(684) : see reference to function template instantiation 'void QC<float>::gateN_qBit<Derived>(const Eigen::MatrixBase<Derived> &,std::vector<int,std::allocator<_Ty>>)' being compiled
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(688) : see reference to function template instantiation 'void QC<float>::gateN_qBit<Derived>(const Eigen::MatrixBase<Derived> &,std::vector<int,std::allocator<_Ty>>)' being compiled
                  with
                  [
                      Derived=Eigen::Matrix<std::complex<float>,-1,-1,0,-1,-1>
          ,            _Ty=int
                  ]
-                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(594) : while compiling class template member function 'std::string QC<float>::parse(std::string)'
-                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(781) : see reference to function template instantiation 'std::string QC<float>::parse(std::string)' being compiled
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(598) : while compiling class template member function 'std::string QC<float>::parse(std::string)'
+                 c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(801) : see reference to function template instantiation 'std::string QC<float>::parse(std::string)' being compiled
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Atul\Documents\gitHub\qcSimulator\Debug\qcSimulator.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Atul\Documents\gitHub\qcSimulator\Debug\qcSimulator.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Atul\Documents\gitHub\qcSimulator\Debug\qcSimulator.lib" /MACHINE:X86 Debug\qcSimulator.obj
          qcSimulator.vcxproj -> C:\Users\Atul\Documents\gitHub\qcSimulator\Debug\qcSimulator.exe
@@ -58,4 +58,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:03.32
+Time Elapsed 00:00:03.15

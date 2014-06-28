@@ -189,7 +189,7 @@ public:
 
 public:	
 	map<string, Matrix<scalar, Dynamic, Dynamic> > gates;
-	typedef Matrix<scalar,Dynamic,Dynamic> (pGateType)(vector<int> param);
+	typedef Matrix<scalar,Dynamic,Dynamic> (pGateType)(vector<int>& param);
 	//think of this as int* (you'll put a function pointer, thus pGateType*)
 	map<string, pGateType*> pGates;
 
@@ -680,12 +680,14 @@ public:
 					//cin.get();
 					//if (gateNameToMatrix(inst.command).cols == inst.param.size())
 					//gateN_qBit(gateNameToMatrix(inst.command), inst.param);
-					if (inst.command.compare("init") == 0 && inst.param.size()==2)
+					if (inst.command.compare("init") == 0 && inst.param.size() == 2)
 						init_qBit(inst.param[0], inst.param[1]);
-					else if (inst.command.compare("measure")==0)
+					else if (inst.command.compare("measure") == 0)
 						measure_qBits(inst.param);
 					else if (gates.find(inst.command) != gates.end())
 						gateN_qBit(gates[inst.command], inst.param);
+					else if (pGates.find(inst.command) != pGates.end())
+						gateN_qBit(pGates[inst.command](inst.param), inst.param);
 					else if (inst.command.compare("nop") == 0)
 						status = "NOP: No Operation\n----\n";
 					else
@@ -717,14 +719,31 @@ public:
 		return parseLog.str();
 	}
 };
-
-Matrix < complex <float>, Dynamic, Dynamic> paramH(vector<int> param)
+template <typename decimal>
+Matrix < complex <decimal>, Dynamic, Dynamic> ft (vector<int>& param)
 {
-	Matrix <complex <float>, Dynamic, Dynamic> aha;
-	aha.resize(2, 2);
-	aha << 1, 0, 0, 1;
+	Matrix <complex <decimal>, Dynamic, Dynamic> ftMat;
+	int N = (1 << (param.size()));
+	float rootN = sqrt(N);
+	float twoPiByN = 2 * M_PI / N;
+	//complex<float> omega = exp(complex<float>(0, (-2 * M_PI) / N));
+	ftMat.resize(N, N);
+	//cout << "N=" << N;
+	//aha << 1, 0, 0, 1;
+	for (int j = 0; j < N; j++)
+	{
+		for (int k = 0; k < N; k++)
+		{
+			//cout << "DOING SOMETHING j=" << j <<" k="<<k<< endl;
+			//ftMat(j, k) = exp(complex<float>(0, 2 * M_PI));
+			ftMat(j,k) = exp(complex<decimal>(0, (- twoPiByN * j * k))) / rootN;
+		}		
+	}
 	cout << "WOAH!";
-	return aha;
+	cout << ftMat;
+	cout << endl << endl;
+	//param.erase(param.begin(), param.begin() + 2);
+	return ftMat;
 }
 
 int main()
@@ -767,8 +786,10 @@ int main()
 	//QCf::pGateType fH = &paramH;
 	//Matrix < complex <float>, Dynamic, Dynamic>(*paramHstar)(vector<int> param);
 	//paramHstar = paramH;
-	qc.pGates["paramh"] = paramH;
-	qc.pGates["paramh"]({ 0, 1 });
+	qc.pGates["ft"] = ft;
+	//vector <int> a = { 0 };
+	//cout<<qc.pGates["ft"](a)<<endl;
+	//cout << "And now:" << to_string(a, ",");
 
 	/////////////Adding custom gates
 	//qc.gates["x"].resize(2, 2);

@@ -557,16 +557,9 @@ int main()
     qc.status_qBits();
     cout<<qc.status<<endl;
     
-	//Matrix<double,2,2> mat1,mat2;
-	//mat2<<1,1,2,2;
-	//mat1=mat2;
-	//cout<<mat1<<endl<<mat2;
-	//_getch();
 	cin.get();
-	//QCf::mat2x2 m;
 
 	cout << "Now testing REGEX\n";
-
 	cout << "Enter an assembly code of the following form\n" <<
 		"cnot\tq0,q1\n" << endl;
 
@@ -577,7 +570,9 @@ int main()
 
     //cout<<process_ftp("1234 This is amazing",&test)<<endl<<test;    
 	//string regex_str = "(?:([a-z]+)\\s+)|(?:(?:\\s*,\\s*))([0-9]+)";
-	string regex_str = "(?:q?([0-9]|\\w+))";
+	string regex_syntax = "^\\s*(?=#)|^\\s*def.*|^\\s*\\w+\\s+[a-z]?\\d+(?:\\s*,\\s*[a-z]?\\d+)*\\s*(?:(?=#)(?:.*))?$";
+	string regex_gate = "^\\s*(?!def)(?!qubit)^\\s*[a-zA-Z0-9]+\\s+[a-z]?[0-9]+(?:\\s*,\\s*[a-z]?\\d+)*\\s*(?:(?=#)(?:.*))?$";
+	string regex_extract = "(?:q?([0-9]|\\w+))";
 	//string regex_str = "(?:([a-z]+)\\s+|(?:\\s*,\\s*))([0-9]+)";
 
 	//string regex_str = "(?:([a-z]+)\\s+)([0-9]+)|(?:(?:\\s*,\\s*)([0-9]+))";
@@ -593,7 +588,9 @@ int main()
     // regex rx(regex_str, regex_constants::icase);
     // regex rx(regex_str);
     // regex rx(regex_str,regex_constants::grep | regex_constants::icase);
-    regex rx(regex_str);
+    //regex rx(regex_extract);
+	regex rx;
+	rx = regex(regex_extract);
 	//regex rx("(?:([a-z]+)\\s+)([0-9]+)|(?:(?:\\s*,\\s*)([0-9]+))");
 
     // regex rx("[a-z]*\\.*");
@@ -628,7 +625,7 @@ int main()
 //   text_iter = results[0].second;
 //}
 
-	cout << "About to match ["<<test<<"] with pattern ["<<regex_str<<"]\n";
+	cout << "About to match ["<<test<<"] with pattern ["<<regex_extract<<"]\n";
 	auto wordsBegin = sregex_iterator(test.begin(), test.end(), rx);
 	auto wordsEnd = sregex_iterator();
 

@@ -1,9 +1,9 @@
-﻿Build started 27/06/2014 09:42:55 PM.
+﻿Build started 28/06/2014 09:43:42 AM.
      1>Project "C:\Users\Atul\Documents\gitHub\qcSimulator\qcSimulator\qcSimulator.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt qcSimulator.cpp
          qcSimulator.cpp
-     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(649): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(646): warning C4018: '<' : signed/unsigned mismatch
      1>c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(196): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
                  c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(194) : while compiling class template member function 'QC<float>::QC(int)'
                  c:\users\atul\documents\github\qcsimulator\qcsimulator\qcsimulator.cpp(527) : see reference to function template instantiation 'QC<float>::QC(int)' being compiled
@@ -41,4 +41,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.72
+Time Elapsed 00:00:03.55

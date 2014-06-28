@@ -19,7 +19,7 @@ Development Phases:
             ii. General, N qBit [done]
     B. Implement Usable Interface
         1. Allow for physics like state initialization (cheating method) [done]
-        2. Allow for assembly language like gates implementation (look at the codes Neilson used in his book for making those figures) [working on regex]
+        2. Allow for assembly language like gates implementation (look at the codes Neilson used in his book for making those figures) [partially working]
         3. Implement common things like QFT, 
         (viz. construct the gate sequence on the fly and apply it)
         4. Apply arbitrary unitaries? [same as general N qBit gate]

@@ -570,7 +570,7 @@ int main()
 
     //cout<<process_ftp("1234 This is amazing",&test)<<endl<<test;    
 	//string regex_str = "(?:([a-z]+)\\s+)|(?:(?:\\s*,\\s*))([0-9]+)";
-	string regex_syntax = "^\\s*(?=#)|^\\s*def.*|^\\s*\\w+\\s+[a-z]?\\d+(?:\\s*,\\s*[a-z]?\\d+)*\\s*(?:(?=#)(?:.*))?$";
+	string regex_syntax = "^\\s*(?=#)|^\\s*def.*|^\\s*qubit.*|^\\s*\\w+\\s+[a-z]?\\d+(?:\\s*,\\s*[a-z]?\\d+)*\\s*(?:(?=#)(?:.*))?$";
 	string regex_gate = "^\\s*(?!def)(?!qubit)^\\s*[a-zA-Z0-9]+\\s+[a-z]?[0-9]+(?:\\s*,\\s*[a-z]?\\d+)*\\s*(?:(?=#)(?:.*))?$";
 	string regex_extract = "(?:q?([0-9]|\\w+))";
 	//string regex_str = "(?:([a-z]+)\\s+|(?:\\s*,\\s*))([0-9]+)";
@@ -589,79 +589,49 @@ int main()
     // regex rx(regex_str);
     // regex rx(regex_str,regex_constants::grep | regex_constants::icase);
     //regex rx(regex_extract);
-	regex rx;
-	rx = regex(regex_extract);
-	//regex rx("(?:([a-z]+)\\s+)([0-9]+)|(?:(?:\\s*,\\s*)([0-9]+))");
-
-    // regex rx("[a-z]*\\.*");
+	regex rx;	
     smatch m;
 
-    //string line;
-    //cin>>line;
-    // sregex_iterator it(line.begin(),line.end(),rx);
-    // sregex_iterator it_end;
+	rx = regex(regex_syntax);
 
-    // while(it != it_end)
-    // {
-    //     cout<< *it <<endl;
-    //     it++;
-    // }
-
-//std::string::const_iterator text_iter = text.cbegin();
-//compiledRegex = std::regex(regex, std::tr1::regex_constants::extended);
-//
-//while (regex_search(text_iter, text.end(), results, compiledRegex))
-//{
-//    int count = results.size();
-//    // Alloc pointer array based on count * sizeof(mystruct).
-//    for ( std::cmatch::iterator group = results.begin();
-//          group != results.end();
-//          ++group )
-//    {
-//        // If you uses grouping in your search here you can access each group
-//    }
-//
-//   std::cout << std::string(results[0].first, results[0].second) << endl;
-//   text_iter = results[0].second;
-//}
-
-	cout << "About to match ["<<test<<"] with pattern ["<<regex_extract<<"]\n";
-	auto wordsBegin = sregex_iterator(test.begin(), test.end(), rx);
-	auto wordsEnd = sregex_iterator();
-
-	auto n = distance(wordsBegin, wordsEnd);
-	if (n)
+	if (regex_match(test, rx))
 	{
-		cout << "The epxression matched, " << n << " times. Now printing extractions\nPress any key\n";
-		//cin.get();
-		// string operation = (m[0]);
-		// string qBit1 = m[2];
-		// string qBit2 = m[3];
-		//THIS WORKS PARTIALLY
-		for (sregex_iterator i = wordsBegin; i != wordsEnd; i++)
+		//cout << "Syntax is found to be correct"<<endl;
+		rx = regex(regex_gate);
+		if (regex_match(test, rx))
 		{
-			m = *i;
-			cout << "String output:" << m.str()<<endl;
-			cout << "The expression was:" << m[0] << endl;
-			for (int mI = 1; mI < m.size(); mI++)
+			rx = regex(regex_extract);
+			cout << "About to match [" << test << "] with pattern [" << regex_extract << "]\n";
+			auto wordsBegin = sregex_iterator(test.begin(), test.end(), rx);
+			auto wordsEnd = sregex_iterator();
+
+			auto n = distance(wordsBegin, wordsEnd);
+			if (n)
 			{
-				if (m[mI].length())
-					cout << "Info [" << mI << "] " << m[mI] << endl;
+				cout << "The epxression matched, " << n << " times. Now printing extractions\nPress any key\n";
+				for (sregex_iterator i = wordsBegin; i != wordsEnd; i++)
+				{
+					m = *i;
+					cout << "String output:" << m.str() << endl;
+					cout << "The expression was:" << m[0] << endl;
+					for (int mI = 1; mI < m.size(); mI++)
+					{
+						if (m[mI].length())
+							cout << "Info [" << mI << "] " << m[mI] << endl;
+					}
+					cout << endl << endl;
+				}
 			}
-			cout << endl << endl;
+		}
+		else
+		{
+			cout << "Command not implemented; ignored" << endl;
 		}
 
-		//m = *wordsBegin;
-		//cout << "The expression was:" << m[0] << endl;
-		//for (int mI = 0; mI < m.size(); mI++)
-		//{
-		//	cout << "Info [" << mI << "] " << m[mI] << endl;
-		//}
-		//cout << endl << endl;
-
-		//cout<<"operation:"<<m[1]<<endl
-		//          <<"qBit1:"<<m[2]<<endl
-		//          <<"qBit2:"<<m[2]<<endl;		
+	}
+	else
+	{
+		cout << "Invalid syntax, ignoring line";
 	}
 
 
